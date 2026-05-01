@@ -1,7 +1,9 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -11,7 +13,12 @@ import java.util.List;
  */
 public class ChessPiece {
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
+
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -30,14 +37,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -48,6 +55,56 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        ChessPiece piece = board.getPiece(myPosition);
+        int startingRow = myPosition.getRow();
+        int startingCol = myPosition.getColumn();
+        List<ChessMove> possibleMoves = new ArrayList<>();
+
+        if (piece.getPieceType() == PieceType.BISHOP) {
+            for (int i = 1; i < 8; i++) {
+                if (startingRow + i > 0 && startingRow + i < 9) {
+                    if (startingCol + i > 0 && startingCol + i < 9) {
+                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow + i, startingCol + i), null));
+                    }
+                    if (startingCol - i > 0 && startingCol - i < 9) {
+                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow + i, startingCol - i), null));
+                    }
+                }
+                if (startingRow - i > 0 && startingRow - i < 9) {
+                    if (startingCol + i > 0 && startingCol + i < 9) {
+                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow - i, startingCol + i), null));
+                    }
+                    if (startingCol - i > 0 && startingCol - i < 9) {
+                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow - i, startingCol - i), null));
+                    }
+                }
+            }
+        }
+        return possibleMoves;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
