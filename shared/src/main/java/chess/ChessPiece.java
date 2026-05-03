@@ -56,9 +56,16 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         Collection<ChessMove> possibleMoves = new ArrayList<>();
+        PieceType pieceType = piece.getPieceType();
 
-        if (piece.getPieceType() == PieceType.BISHOP) {
+        if (pieceType == PieceType.BISHOP) {
             possibleMoves = new BishopMovesCalculator().pieceMoves(board, myPosition);
+        }
+        if (pieceType == PieceType.ROOK) {
+            possibleMoves = new RookMovesCalculator().pieceMoves(board, myPosition);
+        }
+        if (pieceType == PieceType.QUEEN) {
+            possibleMoves = new QueenMovesCalculator().pieceMoves(board, myPosition);
         }
         return possibleMoves;
     }
