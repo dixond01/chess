@@ -67,6 +67,9 @@ public class ChessPiece {
         if (pieceType == PieceType.QUEEN) {
             possibleMoves = new QueenMovesCalculator().pieceMoves(board, myPosition);
         }
+        if (pieceType == PieceType.PAWN) {
+            possibleMoves = new PawnMovesCalculator().pieceMoves(board, myPosition);
+        }
         return possibleMoves;
     }
 
