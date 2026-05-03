@@ -68,6 +68,8 @@ public class ChessPiece {
             possibleMoves = new PawnMovesCalculator().pieceMoves(board, myPosition);
         } else if (pieceType == PieceType.KING) {
             possibleMoves = new KingMovesCalculator().pieceMoves(board, myPosition);
+        } else if (pieceType == PieceType.KNIGHT) {
+            possibleMoves = new KnightMovesCalculator().pieceMoves(board, myPosition);
         }
         return possibleMoves;
     }
