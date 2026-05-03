@@ -60,15 +60,14 @@ public class ChessPiece {
 
         if (pieceType == PieceType.BISHOP) {
             possibleMoves = new BishopMovesCalculator().pieceMoves(board, myPosition);
-        }
-        if (pieceType == PieceType.ROOK) {
+        } else if (pieceType == PieceType.ROOK) {
             possibleMoves = new RookMovesCalculator().pieceMoves(board, myPosition);
-        }
-        if (pieceType == PieceType.QUEEN) {
+        } else if (pieceType == PieceType.QUEEN) {
             possibleMoves = new QueenMovesCalculator().pieceMoves(board, myPosition);
-        }
-        if (pieceType == PieceType.PAWN) {
+        } else if (pieceType == PieceType.PAWN) {
             possibleMoves = new PawnMovesCalculator().pieceMoves(board, myPosition);
+        } else if (pieceType == PieceType.KING) {
+            possibleMoves = new KingMovesCalculator().pieceMoves(board, myPosition);
         }
         return possibleMoves;
     }
