@@ -45,7 +45,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
 
 
         for (ChessPosition newPosition : newPositions) {
-            if ((color == ChessGame.TeamColor.WHITE && newPosition.getRow() == 8) || (color == ChessGame.TeamColor.BLACK && newPosition.getRow() == 1)) {
+            if ((color == ChessGame.TeamColor.WHITE && newPosition.getRow() == 8)
+                    || (color == ChessGame.TeamColor.BLACK && newPosition.getRow() == 1)) {
                 pawnUpdatePossibleMoves(possibleMoves, position, newPosition, ChessPiece.PieceType.QUEEN, piece, board);
                 pawnUpdatePossibleMoves(possibleMoves, position, newPosition, ChessPiece.PieceType.BISHOP, piece, board);
                 pawnUpdatePossibleMoves(possibleMoves, position, newPosition, ChessPiece.PieceType.ROOK, piece, board);
