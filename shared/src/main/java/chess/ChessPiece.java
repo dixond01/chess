@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -56,29 +55,10 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
-        int startingRow = myPosition.getRow();
-        int startingCol = myPosition.getColumn();
-        List<ChessMove> possibleMoves = new ArrayList<>();
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
 
         if (piece.getPieceType() == PieceType.BISHOP) {
-            for (int i = 1; i < 8; i++) {
-                if (startingRow + i > 0 && startingRow + i < 9) {
-                    if (startingCol + i > 0 && startingCol + i < 9) {
-                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow + i, startingCol + i), null));
-                    }
-                    if (startingCol - i > 0 && startingCol - i < 9) {
-                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow + i, startingCol - i), null));
-                    }
-                }
-                if (startingRow - i > 0 && startingRow - i < 9) {
-                    if (startingCol + i > 0 && startingCol + i < 9) {
-                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow - i, startingCol + i), null));
-                    }
-                    if (startingCol - i > 0 && startingCol - i < 9) {
-                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(startingRow - i, startingCol - i), null));
-                    }
-                }
-            }
+            possibleMoves = new BishopMovesCalculator().pieceMoves(board, myPosition);
         }
         return possibleMoves;
     }

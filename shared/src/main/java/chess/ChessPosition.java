@@ -34,6 +34,10 @@ public class ChessPosition {
         return col;
     }
 
+    public boolean outOfRange() {
+        return row < 1 || row > 8 || col < 1 || col > 8;
+    }
+
     @Override
     public String toString() {
         return String.format("[%d,%d]", row, col);
