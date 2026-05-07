@@ -22,6 +22,11 @@ public class ChessPiece {
         this.type = type;
     }
 
+    ChessPiece (ChessPiece other) {
+        this.pieceColor = other.getTeamColor();
+        this.type = other.getPieceType();
+    }
+
     /**
      * The various different chess piece options
      */

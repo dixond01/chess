@@ -92,4 +92,14 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(squares);
     }
+
+    ChessBoard (ChessBoard other) {
+        ChessPiece[][] newSquares = new ChessPiece[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                newSquares[i][j] = new ChessPiece(other.squares[i][j]);
+            }
+        }
+        this.squares = newSquares;
+    }
 }
