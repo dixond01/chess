@@ -74,6 +74,17 @@ public class ChessGame {
         return validMoves;
     }
 
+    public boolean hasValidMoves(TeamColor teamColor) {
+        HashMap<ChessPosition, ChessPiece> myPositions = (HashMap<ChessPosition, ChessPiece>) getPiecePositions(teamColor);
+        for (ChessPosition position : myPositions.keySet()) {
+            Collection<ChessMove> validMoves = validMoves(position);
+            if (validMoves != null && !validMoves.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Makes a move in the chess game
      *
@@ -165,6 +176,7 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         }
+        return hasValidMoves(teamColor);
     }
 
     /**
@@ -175,7 +187,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return !isInCheck(teamColor) && hasValidMoves(teamColor);
     }
 
     /**
