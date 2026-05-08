@@ -2,8 +2,6 @@ package chess;
 
 import java.util.*;
 
-import chess.ChessPiece;
-
 /**
  * A class that can manage a chess game, making moves on a board
  * <p>
