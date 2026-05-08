@@ -71,15 +71,15 @@ public class ChessGame {
         return validMoves;
     }
 
-    public boolean hasValidMoves(TeamColor teamColor) {
+    public boolean noValidMoves(TeamColor teamColor) {
         HashMap<ChessPosition, ChessPiece> myPositions = (HashMap<ChessPosition, ChessPiece>) getPiecePositions(teamColor);
         for (ChessPosition position : myPositions.keySet()) {
             Collection<ChessMove> validMoves = validMoves(position);
             if (validMoves != null && !validMoves.isEmpty()) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -176,7 +176,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return isInCheck(teamColor) && !hasValidMoves(teamColor);
+        return isInCheck(teamColor) && noValidMoves(teamColor);
     }
 
     /**
@@ -187,7 +187,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return !isInCheck(teamColor) && !hasValidMoves(teamColor);
+        return !isInCheck(teamColor) && noValidMoves(teamColor);
     }
 
     /**
