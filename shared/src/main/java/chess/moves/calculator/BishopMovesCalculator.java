@@ -18,7 +18,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
         boolean topLeftFlag = true;
-        boolean topRightFlag= true;
+        boolean topRightFlag = true;
         boolean bottomLeftFlag = true;
         boolean bottomRightFlag = true;
 

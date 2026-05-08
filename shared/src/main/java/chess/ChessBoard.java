@@ -41,17 +41,17 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        resetBackline(ChessGame.TeamColor.WHITE);
-        resetFrontline(ChessGame.TeamColor.WHITE);
-        resetBackline(ChessGame.TeamColor.BLACK);
-        resetFrontline(ChessGame.TeamColor.BLACK);
+        resetBackRow(ChessGame.TeamColor.WHITE);
+        resetFrontRow(ChessGame.TeamColor.WHITE);
+        resetBackRow(ChessGame.TeamColor.BLACK);
+        resetFrontRow(ChessGame.TeamColor.BLACK);
         for (int i = 2; i < 6; i++) {
             for (int j = 0; j < 8; j++) {
                 squares[i][j] = null;
             }
         }
     }
-    private void resetBackline(ChessGame.TeamColor color) {
+    private void resetBackRow(ChessGame.TeamColor color) {
         int row = 0;
         if (color == ChessGame.TeamColor.BLACK) {
             row = 7;
@@ -66,7 +66,7 @@ public class ChessBoard {
         squares[row][7] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
 
     }
-    private void resetFrontline(ChessGame.TeamColor color) {
+    private void resetFrontRow(ChessGame.TeamColor color) {
         int row = 1;
         if (color == ChessGame.TeamColor.BLACK) {
             row = 6;
