@@ -97,7 +97,11 @@ public class ChessBoard {
         ChessPiece[][] newSquares = new ChessPiece[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                newSquares[i][j] = new ChessPiece(other.squares[i][j]);
+                if (other.squares[i][j] == null) {
+                    newSquares[i][j] = null;
+                } else {
+                    newSquares[i][j] = new ChessPiece(other.squares[i][j]);
+                }
             }
         }
         this.squares = newSquares;
