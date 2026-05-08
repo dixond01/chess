@@ -93,11 +93,14 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece myPiece = gameBoard.getPiece(move.getStartPosition());
-        if (!validMoves(move.getStartPosition()).contains(move) || getTeamTurn() != myPiece.getTeamColor()) {
+        Collection<ChessMove> moves = validMoves(move.getStartPosition());
+        if (moves == null || !moves.contains(move)
+                || getTeamTurn() != myPiece.getTeamColor()) {
             throw new InvalidMoveException();
         }
         gameBoard.addPiece(move.getStartPosition(), null);
         gameBoard.addPiece(move.getEndPosition(), myPiece);
+        setTeamTurn(getEnemyColor(teamTurn));
     }
 
     /**
