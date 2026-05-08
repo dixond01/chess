@@ -19,7 +19,9 @@ public class ChessGame {
     ChessBoard gameBoard;
 
     public ChessGame() {
-
+        this.teamTurn = TeamColor.WHITE;
+        this.gameBoard = new ChessBoard();
+        gameBoard.resetBoard();
     }
 
     /**
