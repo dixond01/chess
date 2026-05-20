@@ -1,12 +1,8 @@
 package service;
 
-import dataaccess.AlreadyTakenException;
-import dataaccess.AuthDAO;
-import dataaccess.InvalidLoginException;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
@@ -36,13 +32,19 @@ public class UserService {
         return new RegisterResult(authData.username(), authData.authToken());
     }
 
-    public LoginResult login(LoginRequest loginRequest) throws InvalidLoginException {
+    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException {
         UserData userData = userDAO.getUser(loginRequest.username());
         if (userData == null || !Objects.equals(userData.password(), loginRequest.password())) {
-            throw new InvalidLoginException();
+            throw new UnauthorizedException("username or password incorrect");
         }
         AuthData authData = authDAO.createAuth(userData.username());
         return new LoginResult(authData.username(), authData.authToken());
     }
-//    public void logout(LogoutRequest logoutRequest) {}
+    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException{
+        AuthData authData = authDAO.getAuth(logoutRequest.authToken());
+        if (authData == null) {
+            throw new UnauthorizedException();
+        }
+        authDAO.deleteAuth(authData);
+    }
 }

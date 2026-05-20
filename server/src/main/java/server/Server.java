@@ -4,14 +4,12 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import model.GameData;
-import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
 import service.request.LoginRequest;
+import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;
 import service.result.RegisterResult;
@@ -35,11 +33,12 @@ public class Server {
                 .delete("/db", this::clear)
                 .post("/user", this::register)
                 .post("/session", this::login)
+                .delete("/session", this::logout)
                 .exception(BadRequestException.class, (e, ctx) -> {
                     ctx.status(400);
                     errorResult(e, ctx);
                 })
-                .exception(InvalidLoginException.class, (e, ctx) -> {
+                .exception(UnauthorizedException.class, (e, ctx) -> {
                     ctx.status(401);
                     errorResult(e,ctx);
                 })
@@ -84,13 +83,19 @@ public class Server {
         ctx.status(200);
     }
 
-    private void login(Context ctx) throws DataAccessException, BadRequestException, InvalidLoginException {
+    private void login(Context ctx) throws DataAccessException, BadRequestException, UnauthorizedException {
         LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
         if (isFieldBlank(loginRequest.username()) || isFieldBlank(loginRequest.password())) {
             throw new BadRequestException("Must include username and password");
         }
         LoginResult loginResult = userService.login(loginRequest);
         ctx.result(new Gson().toJson(loginResult));
+        ctx.status(200);
+    }
+
+    private void logout(Context ctx) throws DataAccessException, UnauthorizedException {
+        LogoutRequest logoutRequest = new Gson().fromJson(ctx.header("authorization"), LogoutRequest.class);
+        userService.logout(logoutRequest);
         ctx.status(200);
     }
 

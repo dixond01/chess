@@ -3,6 +3,7 @@ package dataaccess;
 import model.UserData;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MemoryUserDAO implements UserDAO {
     private HashMap<String, UserData> users = new HashMap<>();
@@ -17,11 +18,11 @@ public class MemoryUserDAO implements UserDAO {
         users.put(userData.username(), userData);
     }
 
-    public HashMap<String, UserData> getUsers() {
+    public Map<String, UserData> getUsers() {
         return users;
     }
 
-    public void setUsers(HashMap<String, UserData> users) {
-        this.users = users;
+    public void setUsers(Map<String, UserData> users) {
+        this.users = (HashMap<String, UserData>) users;
     }
 }

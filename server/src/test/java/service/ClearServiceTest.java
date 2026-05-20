@@ -23,7 +23,7 @@ class ClearServiceTest {
 
         userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
         gameDAO.setGames(new HashMap<>(Map.of(1, new GameData(1, "white", "black", "game", new ChessGame()))));
-        authDAO.setAuths(new HashMap<>(Map.of("username", new AuthData("token", "username"))));
+        authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
 
         var clearService = new ClearService(userDAO, gameDAO, authDAO);
         clearService.clear();
