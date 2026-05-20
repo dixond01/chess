@@ -34,15 +34,15 @@ public class Server {
                 .post("/user", this::register)
                 .exception(BadRequestException.class, (e, ctx) -> {
                     ctx.status(400);
-                    ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+                    errorResult(e, ctx);
                 })
                 .exception(AlreadyTakenException.class, (e, ctx) -> {
                     ctx.status(403);
-                    ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+                    errorResult(e, ctx);
                 })
                 .exception(DataAccessException.class, (e, ctx) -> {
                     ctx.status(500);
-                    ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+                    errorResult(e, ctx);
                 });
 
 
@@ -57,6 +57,10 @@ public class Server {
 
     public void stop() {
         javalin.stop();
+    }
+
+    private void errorResult(Exception e, Context ctx) {
+        ctx.result(new Gson().toJson(Map.of("message", "Error: " + e.getMessage())));
     }
 
     private void clear(Context ctx) throws DataAccessException{
