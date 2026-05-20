@@ -8,12 +8,15 @@ import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
+import service.request.ListGamesRequest;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;
 import service.result.RegisterResult;
+import service.result.ListGamesResult;
 
+import javax.xml.crypto.Data;
 import java.util.Map;
 
 public class Server {
@@ -34,6 +37,7 @@ public class Server {
                 .post("/user", this::register)
                 .post("/session", this::login)
                 .delete("/session", this::logout)
+                .get("/game", this::listGames)
                 .exception(BadRequestException.class, (e, ctx) -> {
                     ctx.status(400);
                     errorResult(e, ctx);
@@ -96,6 +100,13 @@ public class Server {
     private void logout(Context ctx) throws DataAccessException, UnauthorizedException {
         LogoutRequest logoutRequest = new LogoutRequest(ctx.header("authorization"));
         userService.logout(logoutRequest);
+        ctx.status(200);
+    }
+
+    private void listGames(Context ctx) throws DataAccessException, UnauthorizedException {
+        ListGamesRequest listGamesRequest = new ListGamesRequest(ctx.header("authorization"));
+        ListGamesResult listGamesResult = gameService.listGames(listGamesRequest);
+        ctx.result(new Gson().toJson(listGamesResult));
         ctx.status(200);
     }
 

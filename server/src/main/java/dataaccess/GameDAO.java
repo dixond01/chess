@@ -2,8 +2,10 @@ package dataaccess;
 
 import model.GameData;
 
-public interface GameDAO {
-    void deleteGame(GameData gameData) throws DataAccessException;
+import java.util.List;
 
+public interface GameDAO {
+    void deleteGame(GameData gameData);
     void deleteAllGames();
+    List<GameData> listGames();
 }
