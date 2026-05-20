@@ -1,7 +1,11 @@
 package service;
 
+import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
+import model.AuthData;
+import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
@@ -18,7 +22,17 @@ public class UserService {
         this.authDAO = authDAO;
     }
 
-//    public RegisterResult register(RegisterRequest registerRequest) {}
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException{
+        UserData userData = userDAO.getUser(registerRequest.username());
+        if (userData != null) {
+            throw new AlreadyTakenException();
+        }
+        userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+        userDAO.createUser(userData);
+        AuthData authData = authDAO.createAuth(userData.username());
+        return new RegisterResult(authData.username(), authData.authToken());
+    }
+
 //    public LoginResult login(LoginRequest loginRequest) {}
 //    public void logout(LogoutRequest logoutRequest) {}
 }

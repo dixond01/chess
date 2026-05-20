@@ -6,4 +6,6 @@ public interface UserDAO {
     void deleteUser(UserData userData) throws DataAccessException;
     //maybe deleteAllUsers for clear?
     void deleteAllUsers();
+    UserData getUser(String username);
+    void createUser(UserData userData);
 }

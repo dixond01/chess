@@ -1,13 +1,18 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import model.GameData;
+import model.UserData;
 import org.eclipse.jetty.server.Authentication;
+import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
+import service.request.RegisterRequest;
+import service.result.RegisterResult;
 
 public class Server {
 
@@ -23,7 +28,9 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .delete("/db", this::clear);
+                .delete("/db", this::clear)
+                .post("/user", this::register);
+
 
         // Register your endpoints and exception handlers here.
 
@@ -40,6 +47,15 @@ public class Server {
 
     private void clear(Context ctx) throws DataAccessException{
         clearService.clear();
+        ctx.status(200);
+    }
+    private void register(Context ctx) throws DataAccessException, AlreadyTakenException, BadRequestException {
+        RegisterRequest registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
+            throw new BadRequestException("Must include username, password, and email.");
+        }
+        RegisterResult registerResult = userService.register(registerRequest);
+        ctx.result(new Gson().toJson(registerResult));
         ctx.status(200);
     }
 }
