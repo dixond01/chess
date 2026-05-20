@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
+import dataaccess.InvalidLoginException;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -11,6 +12,8 @@ import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;
 import service.result.RegisterResult;
+
+import java.util.Objects;
 
 public class UserService {
     private final UserDAO userDAO;
@@ -33,6 +36,13 @@ public class UserService {
         return new RegisterResult(authData.username(), authData.authToken());
     }
 
-//    public LoginResult login(LoginRequest loginRequest) {}
+    public LoginResult login(LoginRequest loginRequest) throws InvalidLoginException {
+        UserData userData = userDAO.getUser(loginRequest.username());
+        if (userData == null || !Objects.equals(userData.password(), loginRequest.password())) {
+            throw new InvalidLoginException();
+        }
+        AuthData authData = authDAO.createAuth(userData.username());
+        return new LoginResult(authData.username(), authData.authToken());
+    }
 //    public void logout(LogoutRequest logoutRequest) {}
 }

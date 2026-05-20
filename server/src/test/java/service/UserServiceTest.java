@@ -1,12 +1,19 @@
 package service;
 
 import dataaccess.AlreadyTakenException;
+import dataaccess.InvalidLoginException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
+import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.request.LoginRequest;
 import service.request.RegisterRequest;
+import service.result.LoginResult;
 import service.result.RegisterResult;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,6 +42,21 @@ class UserServiceTest {
         assertThrows(AlreadyTakenException.class, () -> {
             userService.register(new RegisterRequest("username", "anotherPassword", "anotherEmail"));
 
+        });
+    }
+
+    @Test
+    void testSuccessfulLogin() throws InvalidLoginException {
+        userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
+        LoginResult result = userService.login(new LoginRequest("username", "password"));
+        assertEquals("username", result.username());
+    }
+
+    @Test
+    void testInvalidUsername() {
+        userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
+        assertThrows(InvalidLoginException.class, () -> {
+            userService.login(new LoginRequest("typo", "password"));
         });
     }
 }

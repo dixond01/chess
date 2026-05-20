@@ -11,7 +11,9 @@ import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
+import service.request.LoginRequest;
 import service.request.RegisterRequest;
+import service.result.LoginResult;
 import service.result.RegisterResult;
 
 import java.util.Map;
@@ -83,7 +85,13 @@ public class Server {
     }
 
     private void login(Context ctx) throws DataAccessException, BadRequestException, InvalidLoginException {
-
+        LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
+        if (isFieldBlank(loginRequest.username()) || isFieldBlank(loginRequest.password())) {
+            throw new BadRequestException("Must include username and password");
+        }
+        LoginResult loginResult = userService.login(loginRequest);
+        ctx.result(new Gson().toJson(loginResult));
+        ctx.status(200);
     }
 
     private boolean isFieldBlank(String field) {
