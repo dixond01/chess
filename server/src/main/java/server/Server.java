@@ -38,7 +38,8 @@ public class Server {
         javalin.stop();
     }
 
-    private void clear(Context ctx) {
+    private void clear(Context ctx) throws DataAccessException{
         clearService.clear();
+        ctx.status(200);
     }
 }

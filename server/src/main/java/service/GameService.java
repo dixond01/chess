@@ -18,7 +18,7 @@ public class GameService {
         this.authDAO = authDAO;
     }
 
-    public ListGamesResult listGames(ListGamesRequest listGamesRequest) {}
-    public void joinGame(JoinGameRequest joinGameRequest) {}
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) {}
+//    public ListGamesResult listGames(ListGamesRequest listGamesRequest) {}
+//    public void joinGame(JoinGameRequest joinGameRequest) {}
+//    public CreateGameResult createGame(CreateGameRequest createGameRequest) {}
 }
