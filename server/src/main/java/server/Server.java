@@ -94,7 +94,7 @@ public class Server {
     }
 
     private void logout(Context ctx) throws DataAccessException, UnauthorizedException {
-        LogoutRequest logoutRequest = new Gson().fromJson(ctx.header("authorization"), LogoutRequest.class);
+        LogoutRequest logoutRequest = new LogoutRequest(ctx.header("authorization"));
         userService.logout(logoutRequest);
         ctx.status(200);
     }
