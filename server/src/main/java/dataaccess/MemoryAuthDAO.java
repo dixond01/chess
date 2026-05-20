@@ -18,4 +18,12 @@ public class MemoryAuthDAO implements AuthDAO{
     private static String generateToken() {
         return UUID.randomUUID().toString();
     }
+
+    public HashMap<String, AuthData> getAuths() {
+        return auths;
+    }
+
+    public void setAuths(HashMap<String, AuthData> auths) {
+        this.auths = auths;
+    }
 }
