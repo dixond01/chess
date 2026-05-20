@@ -1,7 +1,8 @@
 package server;
 
 import dataaccess.*;
-import io.javalin.*;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 import model.GameData;
 import org.eclipse.jetty.server.Authentication;
 import service.ClearService;
@@ -37,5 +38,7 @@ public class Server {
         javalin.stop();
     }
 
-
+    private void clear(Context ctx) {
+        clearService.clear();
+    }
 }
