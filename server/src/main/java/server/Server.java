@@ -14,6 +14,8 @@ import service.UserService;
 import service.request.RegisterRequest;
 import service.result.RegisterResult;
 
+import java.util.Map;
+
 public class Server {
 
     private final Javalin javalin;
@@ -29,7 +31,19 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", this::clear)
-                .post("/user", this::register);
+                .post("/user", this::register)
+                .exception(BadRequestException.class, (e, ctx) -> {
+                    ctx.status(400);
+                    ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+                })
+                .exception(AlreadyTakenException.class, (e, ctx) -> {
+                    ctx.status(403);
+                    ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+                })
+                .exception(DataAccessException.class, (e, ctx) -> {
+                    ctx.status(500);
+                    ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+                });
 
 
         // Register your endpoints and exception handlers here.
