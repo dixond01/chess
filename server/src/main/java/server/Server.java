@@ -32,9 +32,14 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", this::clear)
                 .post("/user", this::register)
+                .post("/session", this::login)
                 .exception(BadRequestException.class, (e, ctx) -> {
                     ctx.status(400);
                     errorResult(e, ctx);
+                })
+                .exception(InvalidLoginException.class, (e, ctx) -> {
+                    ctx.status(401);
+                    errorResult(e,ctx);
                 })
                 .exception(AlreadyTakenException.class, (e, ctx) -> {
                     ctx.status(403);
@@ -75,6 +80,10 @@ public class Server {
         RegisterResult registerResult = userService.register(registerRequest);
         ctx.result(new Gson().toJson(registerResult));
         ctx.status(200);
+    }
+
+    private void login(Context ctx) throws DataAccessException, BadRequestException, InvalidLoginException {
+
     }
 
     private boolean isFieldBlank(String field) {
