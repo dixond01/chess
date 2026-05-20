@@ -51,11 +51,15 @@ public class Server {
     }
     private void register(Context ctx) throws DataAccessException, AlreadyTakenException, BadRequestException {
         RegisterRequest registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
-        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
+        if (isFieldBlank(registerRequest.username()) || isFieldBlank(registerRequest.password()) || isFieldBlank(registerRequest.email())) {
             throw new BadRequestException("Must include username, password, and email.");
         }
         RegisterResult registerResult = userService.register(registerRequest);
         ctx.result(new Gson().toJson(registerResult));
         ctx.status(200);
+    }
+
+    private boolean isFieldBlank(String field) {
+        return field == null || field.isBlank();
     }
 }
