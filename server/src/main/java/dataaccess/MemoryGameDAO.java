@@ -31,6 +31,12 @@ public class MemoryGameDAO implements GameDAO{
         return gameID;
     }
 
+    public GameData getGame(int gameID) {return games.get(gameID);}
+
+    public void updateGame(GameData gameData) {
+        games.put(gameData.gameID(), gameData);
+    }
+
     public Map<Integer, GameData> getGames() {
         return games;
     }

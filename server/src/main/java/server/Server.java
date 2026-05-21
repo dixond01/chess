@@ -16,6 +16,7 @@ import service.result.ListGamesResult;
 
 import javax.xml.crypto.Data;
 import java.util.Map;
+import java.util.Objects;
 
 public class Server {
 
@@ -37,6 +38,7 @@ public class Server {
                 .delete("/session", this::logout)
                 .get("/game", this::listGames)
                 .post("/game", this::createGame)
+                .put("/game", this::joinGame)
                 .exception(BadRequestException.class, (e, ctx) -> {
                     ctx.status(400);
                     errorResult(e, ctx);
@@ -118,6 +120,17 @@ public class Server {
         CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
         CreateGameResult createGameResult = gameService.createGame(createGameRequest);
         ctx.result(new Gson().toJson(createGameResult));
+        ctx.status(200);
+    }
+
+    private void joinGame(Context ctx) throws BadRequestException, AlreadyTakenException, UnauthorizedException, DataAccessException {
+        String authToken = ctx.header("authorization");
+        JoinGameRequest jsonFields = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
+        if (!Objects.equals(jsonFields.playerColor(), "WHITE") && !Objects.equals(jsonFields.playerColor(), "BLACK")) {
+            throw new BadRequestException("color must be 'WHITE' or 'BLACK'");
+        }
+        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, jsonFields.playerColor(), jsonFields.gameID());
+        gameService.joinGame(joinGameRequest);
         ctx.status(200);
     }
 
