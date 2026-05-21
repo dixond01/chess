@@ -8,7 +8,9 @@ import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.request.CreateGameRequest;
 import service.request.ListGamesRequest;
+import service.result.CreateGameResult;
 import service.result.ListGamesResult;
 
 import java.util.HashMap;
@@ -46,6 +48,20 @@ class GameServiceTest {
         gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
         assertThrows(UnauthorizedException.class, () -> {
             gameService.listGames(new ListGamesRequest("token"));
+        });
+    }
+
+    @Test
+    void testSuccessfulCreateGame() throws UnauthorizedException {
+        authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
+        CreateGameResult result = gameService.createGame(new CreateGameRequest("token", "game"));
+        assertEquals(new CreateGameResult(1), result);
+    }
+
+    @Test
+    void testUnauthorizedCreateGame() {
+        assertThrows(UnauthorizedException.class, () -> {
+            gameService.createGame(new CreateGameRequest("token", "game"));
         });
     }
 }
