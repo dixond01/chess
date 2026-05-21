@@ -80,8 +80,8 @@ class GameServiceTest {
         var gameData = new GameData(1, null, "black", "game", new ChessGame());
         gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
         gameService.joinGame(new JoinGameRequest("token", "WHITE", 1));
-
-        assertEquals(new HashMap<>(Map.of(1, new GameData(1, "username", gameData.blackUsername(), gameData.gameName(), gameData.game()))), gameDAO.getGames());
+        GameData expectedGameData = new GameData(1, "username", gameData.blackUsername(), gameData.gameName(), gameData.game());
+        assertEquals(new HashMap<>(Map.of(1, expectedGameData)), gameDAO.getGames());
     }
 
     @Test
