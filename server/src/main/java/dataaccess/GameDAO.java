@@ -8,4 +8,5 @@ public interface GameDAO {
     void deleteGame(GameData gameData);
     void deleteAllGames();
     List<GameData> listGames();
+    int createGame(String gameName);
 }

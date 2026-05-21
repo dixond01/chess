@@ -32,5 +32,11 @@ public class GameService {
         return new ListGamesResult(games);
     }
 //    public void joinGame(JoinGameRequest joinGameRequest) {}
-//    public CreateGameResult createGame(CreateGameRequest createGameRequest) {}
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws UnauthorizedException {
+        AuthData authData = authDAO.getAuth(createGameRequest.authToken());
+        if (authData == null) {
+            throw new UnauthorizedException();
+        }
+        return new CreateGameResult(gameDAO.createGame(createGameRequest.gameName()));
+    }
 }

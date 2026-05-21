@@ -8,10 +8,8 @@ import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
-import service.request.ListGamesRequest;
-import service.request.LoginRequest;
-import service.request.LogoutRequest;
-import service.request.RegisterRequest;
+import service.request.*;
+import service.result.CreateGameResult;
 import service.result.LoginResult;
 import service.result.RegisterResult;
 import service.result.ListGamesResult;
@@ -38,6 +36,7 @@ public class Server {
                 .post("/session", this::login)
                 .delete("/session", this::logout)
                 .get("/game", this::listGames)
+                .post("/game", this::createGame)
                 .exception(BadRequestException.class, (e, ctx) -> {
                     ctx.status(400);
                     errorResult(e, ctx);
@@ -80,7 +79,7 @@ public class Server {
     private void register(Context ctx) throws DataAccessException, AlreadyTakenException, BadRequestException {
         RegisterRequest registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
         if (isFieldBlank(registerRequest.username()) || isFieldBlank(registerRequest.password()) || isFieldBlank(registerRequest.email())) {
-            throw new BadRequestException("Must include username, password, and email.");
+            throw new BadRequestException("must include username, password, and email");
         }
         RegisterResult registerResult = userService.register(registerRequest);
         ctx.result(new Gson().toJson(registerResult));
@@ -90,7 +89,7 @@ public class Server {
     private void login(Context ctx) throws DataAccessException, BadRequestException, UnauthorizedException {
         LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
         if (isFieldBlank(loginRequest.username()) || isFieldBlank(loginRequest.password())) {
-            throw new BadRequestException("Must include username and password");
+            throw new BadRequestException("must include username and password");
         }
         LoginResult loginResult = userService.login(loginRequest);
         ctx.result(new Gson().toJson(loginResult));
@@ -107,6 +106,18 @@ public class Server {
         ListGamesRequest listGamesRequest = new ListGamesRequest(ctx.header("authorization"));
         ListGamesResult listGamesResult = gameService.listGames(listGamesRequest);
         ctx.result(new Gson().toJson(listGamesResult));
+        ctx.status(200);
+    }
+
+    private void createGame(Context ctx) throws BadRequestException, UnauthorizedException, DataAccessException {
+        String authToken = ctx.header("authorization");
+        String gameName = (String) new Gson().fromJson(ctx.body(), Map.class).get("gameName");
+        if (gameName == null || gameName.isBlank()) {
+            throw new BadRequestException("must include new game name");
+        }
+        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
+        CreateGameResult createGameResult = gameService.createGame(createGameRequest);
+        ctx.result(new Gson().toJson(createGameResult));
         ctx.status(200);
     }
 
