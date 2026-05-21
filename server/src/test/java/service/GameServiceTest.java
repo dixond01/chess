@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.AlreadyTakenException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.UnauthorizedException;
@@ -9,6 +10,7 @@ import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.request.CreateGameRequest;
+import service.request.JoinGameRequest;
 import service.request.ListGamesRequest;
 import service.result.CreateGameResult;
 import service.result.ListGamesResult;
@@ -36,9 +38,12 @@ class GameServiceTest {
     @Test
     void testSuccessfulListGames() throws UnauthorizedException {
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
+
         var gameData = new GameData(1, "white", "black", "game", new ChessGame());
         gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
+
         ListGamesResult games = gameService.listGames(new ListGamesRequest("token"));
+
         assertEquals(new ListGamesResult(List.of(gameData)), games);
     }
 
@@ -46,6 +51,7 @@ class GameServiceTest {
     void testUnauthorizedListGames() {
         var gameData = new GameData(1, "white", "black", "game", new ChessGame());
         gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
+
         assertThrows(UnauthorizedException.class, () -> {
             gameService.listGames(new ListGamesRequest("token"));
         });
@@ -54,7 +60,9 @@ class GameServiceTest {
     @Test
     void testSuccessfulCreateGame() throws UnauthorizedException {
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
+
         CreateGameResult result = gameService.createGame(new CreateGameRequest("token", "game"));
+
         assertEquals(new CreateGameResult(1), result);
     }
 
@@ -62,6 +70,29 @@ class GameServiceTest {
     void testUnauthorizedCreateGame() {
         assertThrows(UnauthorizedException.class, () -> {
             gameService.createGame(new CreateGameRequest("token", "game"));
+        });
+    }
+
+    @Test
+    void testSuccessfulJoinGame() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+        authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
+
+        var gameData = new GameData(1, null, "black", "game", new ChessGame());
+        gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
+        gameService.joinGame(new JoinGameRequest("token", "WHITE", 1));
+
+        assertEquals(new HashMap<>(Map.of(1, new GameData(1, "username", gameData.blackUsername(), gameData.gameName(), gameData.game()))), gameDAO.getGames());
+    }
+
+    @Test
+    void testColorAlreadyTaken() {
+        authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
+
+        var gameData = new GameData(1, null, "black", "game", new ChessGame());
+        gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
+
+        assertThrows(AlreadyTakenException.class, () -> {
+            gameService.joinGame(new JoinGameRequest("token", "BLACK", 1));
         });
     }
 }
