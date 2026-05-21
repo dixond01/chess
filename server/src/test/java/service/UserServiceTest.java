@@ -37,10 +37,9 @@ class UserServiceTest {
     @Test
     void testUsernameAlreadyTaken() throws AlreadyTakenException {
         userService.register(new RegisterRequest("username", "password", "email"));
-        assertThrows(AlreadyTakenException.class, () -> {
-            userService.register(new RegisterRequest("username", "anotherPassword", "anotherEmail"));
-
-        });
+        assertThrows(AlreadyTakenException.class, () ->
+            userService.register(new RegisterRequest("username", "anotherPassword", "anotherEmail"))
+            );
     }
 
     @Test
@@ -53,9 +52,9 @@ class UserServiceTest {
     @Test
     void testInvalidUsername() {
         userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
-        assertThrows(UnauthorizedException.class, () -> {
-            userService.login(new LoginRequest("typo", "password"));
-        });
+        assertThrows(UnauthorizedException.class, () ->
+            userService.login(new LoginRequest("typo", "password"))
+        );
     }
 
     @Test
@@ -67,8 +66,8 @@ class UserServiceTest {
 
     @Test
     void testUnauthorizedLogout() {
-        assertThrows(UnauthorizedException.class, () -> {
-            userService.logout(new LogoutRequest("token"));
-        });
+        assertThrows(UnauthorizedException.class, () ->
+            userService.logout(new LogoutRequest("token"))
+        );
     }
 }

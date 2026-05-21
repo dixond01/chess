@@ -14,7 +14,6 @@ import service.result.LoginResult;
 import service.result.RegisterResult;
 import service.result.ListGamesResult;
 
-import javax.xml.crypto.Data;
 import java.util.Map;
 import java.util.Objects;
 

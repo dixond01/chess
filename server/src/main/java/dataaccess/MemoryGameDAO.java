@@ -17,8 +17,6 @@ public class MemoryGameDAO implements GameDAO{
         this.idIncrement = 1;
     }
 
-    public void deleteGame(GameData gameData) {games.remove(gameData.gameID());}
-
     public void deleteAllGames() {games.clear();}
 
     public List<GameData> listGames() {return new ArrayList<>(games.values());

@@ -52,9 +52,9 @@ class GameServiceTest {
         var gameData = new GameData(1, "white", "black", "game", new ChessGame());
         gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
 
-        assertThrows(UnauthorizedException.class, () -> {
-            gameService.listGames(new ListGamesRequest("token"));
-        });
+        assertThrows(UnauthorizedException.class, () ->
+            gameService.listGames(new ListGamesRequest("token"))
+        );
     }
 
     @Test
@@ -68,9 +68,9 @@ class GameServiceTest {
 
     @Test
     void testUnauthorizedCreateGame() {
-        assertThrows(UnauthorizedException.class, () -> {
-            gameService.createGame(new CreateGameRequest("token", "game"));
-        });
+        assertThrows(UnauthorizedException.class, () ->
+            gameService.createGame(new CreateGameRequest("token", "game"))
+        );
     }
 
     @Test
@@ -91,8 +91,8 @@ class GameServiceTest {
         var gameData = new GameData(1, null, "black", "game", new ChessGame());
         gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
 
-        assertThrows(AlreadyTakenException.class, () -> {
-            gameService.joinGame(new JoinGameRequest("token", "BLACK", 1));
-        });
+        assertThrows(AlreadyTakenException.class, () ->
+            gameService.joinGame(new JoinGameRequest("token", "BLACK", 1))
+        );
     }
 }
