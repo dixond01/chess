@@ -28,14 +28,14 @@ class UserServiceTest {
         userService = new UserService(userDAO, authDAO);
     }
     @Test
-    void testSuccessfulRegister() throws AlreadyTakenException {
+    void testSuccessfulRegister() throws AlreadyTakenException, DataAccessException{
         RegisterResult result = userService.register(new RegisterRequest("username", "password", "email"));
 
         assertEquals("username", result.username());
     }
 
     @Test
-    void testUsernameAlreadyTaken() throws AlreadyTakenException {
+    void testUsernameAlreadyTaken() throws AlreadyTakenException, DataAccessException {
         userService.register(new RegisterRequest("username", "password", "email"));
         assertThrows(AlreadyTakenException.class, () ->
             userService.register(new RegisterRequest("username", "anotherPassword", "anotherEmail"))
@@ -43,14 +43,14 @@ class UserServiceTest {
     }
 
     @Test
-    void testSuccessfulLogin() throws UnauthorizedException {
+    void testSuccessfulLogin() throws UnauthorizedException, DataAccessException {
         userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
         LoginResult result = userService.login(new LoginRequest("username", "password"));
         assertEquals("username", result.username());
     }
 
     @Test
-    void testInvalidUsername() {
+    void testInvalidUsername() throws DataAccessException {
         userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
         assertThrows(UnauthorizedException.class, () ->
             userService.login(new LoginRequest("typo", "password"))
@@ -58,14 +58,14 @@ class UserServiceTest {
     }
 
     @Test
-    void testSuccessfulLogout() throws UnauthorizedException {
+    void testSuccessfulLogout() throws UnauthorizedException, DataAccessException {
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
         userService.logout(new LogoutRequest("token"));
         assertFalse(authDAO.getAuths().containsKey("token"));
     }
 
     @Test
-    void testUnauthorizedLogout() {
+    void testUnauthorizedLogout() throws DataAccessException {
         assertThrows(UnauthorizedException.class, () ->
             userService.logout(new LogoutRequest("token"))
         );

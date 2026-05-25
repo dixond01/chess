@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AlreadyTakenException;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UnauthorizedException;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import service.request.CreateGameRequest;
@@ -25,7 +22,7 @@ public class GameService {
         this.authDAO = authDAO;
     }
 
-    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException {
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException, DataAccessException {
         AuthData authData = authDAO.getAuth(listGamesRequest.authToken());
         if (authData == null) {
             throw new UnauthorizedException();
@@ -33,7 +30,7 @@ public class GameService {
         List<GameData> games = gameDAO.listGames();
         return new ListGamesResult(games);
     }
-    public void joinGame(JoinGameRequest joinGameRequest) throws UnauthorizedException, AlreadyTakenException, BadRequestException {
+    public void joinGame(JoinGameRequest joinGameRequest) throws UnauthorizedException, AlreadyTakenException, BadRequestException, DataAccessException {
         AuthData authData = authDAO.getAuth(joinGameRequest.authToken());
         if (authData == null) {
             throw new UnauthorizedException();
@@ -58,7 +55,7 @@ public class GameService {
 
         gameDAO.updateGame(new GameData(joinGameRequest.gameID(), whiteUsername, blackUsername, gameData.gameName(), gameData.game()));
     }
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws UnauthorizedException {
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws UnauthorizedException, DataAccessException {
         AuthData authData = authDAO.getAuth(createGameRequest.authToken());
         if (authData == null) {
             throw new UnauthorizedException();

@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
     private HashMap<String, AuthData> auths = new HashMap<>();
-    public void deleteAuth(AuthData authData){auths.remove(authData.authToken());}
-    public void deleteAllAuths() {auths.clear();}
+    public void deleteAuth(AuthData authData) throws DataAccessException {auths.remove(authData.authToken());}
+    public void deleteAllAuths() throws DataAccessException {auths.clear();}
     public AuthData createAuth(String username) {
         String authToken = generateToken();
         AuthData authData = new AuthData(authToken, username);
         auths.put(authToken, authData);
         return authData;
     }
-    public AuthData getAuth(String authToken) {return auths.get(authToken);}
+    public AuthData getAuth(String authToken) throws DataAccessException{return auths.get(authToken);}
     private static String generateToken() {
         return UUID.randomUUID().toString();
     }

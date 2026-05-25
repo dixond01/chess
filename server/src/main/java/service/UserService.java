@@ -9,6 +9,7 @@ import service.request.RegisterRequest;
 import service.result.LoginResult;
 import service.result.RegisterResult;
 
+import javax.xml.crypto.Data;
 import java.util.Objects;
 
 public class UserService {
@@ -21,7 +22,7 @@ public class UserService {
         this.authDAO = authDAO;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException{
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException{
         UserData userData = userDAO.getUser(registerRequest.username());
         if (userData != null) {
             throw new AlreadyTakenException("username already taken");
@@ -32,7 +33,7 @@ public class UserService {
         return new RegisterResult(authData.username(), authData.authToken());
     }
 
-    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException {
+    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException, DataAccessException {
         UserData userData = userDAO.getUser(loginRequest.username());
         if (userData == null || !Objects.equals(userData.password(), loginRequest.password())) {
             throw new UnauthorizedException("username or password incorrect");
@@ -40,7 +41,7 @@ public class UserService {
         AuthData authData = authDAO.createAuth(userData.username());
         return new LoginResult(authData.username(), authData.authToken());
     }
-    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException{
+    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException, DataAccessException{
         AuthData authData = authDAO.getAuth(logoutRequest.authToken());
         if (authData == null) {
             throw new UnauthorizedException();

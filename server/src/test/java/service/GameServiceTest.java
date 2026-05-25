@@ -1,10 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AlreadyTakenException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.UnauthorizedException;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +33,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testSuccessfulListGames() throws UnauthorizedException {
+    void testSuccessfulListGames() throws UnauthorizedException, DataAccessException {
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
 
         var gameData = new GameData(1, "white", "black", "game", new ChessGame());
@@ -48,7 +45,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testUnauthorizedListGames() {
+    void testUnauthorizedListGames() throws DataAccessException {
         var gameData = new GameData(1, "white", "black", "game", new ChessGame());
         gameDAO.setGames(new HashMap<>(Map.of(1, gameData)));
 
@@ -58,7 +55,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testSuccessfulCreateGame() throws UnauthorizedException {
+    void testSuccessfulCreateGame() throws UnauthorizedException, DataAccessException{
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
 
         CreateGameResult result = gameService.createGame(new CreateGameRequest("token", "game"));
@@ -67,14 +64,14 @@ class GameServiceTest {
     }
 
     @Test
-    void testUnauthorizedCreateGame() {
+    void testUnauthorizedCreateGame() throws DataAccessException{
         assertThrows(UnauthorizedException.class, () ->
             gameService.createGame(new CreateGameRequest("token", "game"))
         );
     }
 
     @Test
-    void testSuccessfulJoinGame() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    void testSuccessfulJoinGame() throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
 
         var gameData = new GameData(1, null, "black", "game", new ChessGame());
@@ -85,7 +82,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testColorAlreadyTaken() {
+    void testColorAlreadyTaken() throws DataAccessException {
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
 
         var gameData = new GameData(1, null, "black", "game", new ChessGame());
