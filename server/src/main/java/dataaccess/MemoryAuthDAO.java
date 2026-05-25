@@ -17,9 +17,6 @@ public class MemoryAuthDAO implements AuthDAO{
         return authData;
     }
     public AuthData getAuth(String authToken) throws DataAccessException{return auths.get(authToken);}
-    private static String generateToken() {
-        return UUID.randomUUID().toString();
-    }
 
     public Map<String, AuthData> getAuths() {
         return auths;

@@ -1,8 +1,8 @@
 package dataaccess;
 
 import com.google.gson.Gson;
+import model.AuthData;
 import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,39 +11,56 @@ import java.sql.SQLException;
 
 import static java.sql.Types.NULL;
 
-public class SQLUserDAO implements UserDAO {
+public class SQLAuthDAO implements AuthDAO {
 
-    public SQLUserDAO() throws DataAccessException {
+    public SQLAuthDAO() throws DataAccessException{
         DatabaseManager.configureDatabase(createStatements);
     }
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  users (
-              `username` varchar(256) NOT NULL UNIQUE,
-              `password` varchar(256) NOT NULL,
-              'email' varchar(256) DEFAULT NULL UNIQUE,
+            CREATE TABLE IF NOT EXISTS  auths (
+              `username` varchar(256) UNIQUE,
+              `authToken` varchar(256) NOT NULL UNIQUE,
               `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`username`)
+              PRIMARY KEY (`authToken`)
             )
             """
     };
 
     @Override
-    public void deleteAllUsers() throws DataAccessException {
-        var statement = "TRUNCATE TABLE users";
+    public void deleteAuth(AuthData authData) throws DataAccessException {
+        var statement = "DELETE FROM auths WHERE authToken=?";
+        executeUpdate(statement, authData.authToken());
+    }
+
+    @Override
+    public void deleteAllAuths() throws DataAccessException {
+        var statement = "TRUNCATE TABLE auths";
         executeUpdate(statement);
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public AuthData createAuth(String username) throws DataAccessException {
+        var statement = "INSERT INTO auths (username, authToken, json) VALUES (?, ?, ?)";
+
+        String authToken = generateToken();
+        AuthData authData = new AuthData(authToken, username);
+        String json = new Gson().toJson(authData);
+        executeUpdate(statement, username, authToken, json);
+
+        return authData;
+    }
+
+    @Override
+    public AuthData getAuth(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, json FROM users WHERE username=?";
+            var statement = "SELECT authToken, json FROM auths WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         var json = rs.getString("json");
-                        return new Gson().fromJson(json, UserData.class);
+                        return new Gson().fromJson(json, AuthData.class);
                     }
                 }
             }
@@ -52,16 +69,6 @@ public class SQLUserDAO implements UserDAO {
         }
         return null;
     }
-
-    @Override
-    public void createUser(UserData userData) throws DataAccessException {
-        var statement = "INSERT INTO users (username, password, email, json) VALUES (?, ?, ?, ?)";
-        String json = new Gson().toJson(userData);
-        String hashedPassword = UserDAO.hashPassword(userData.password());
-        executeUpdate(statement, userData.username(), hashedPassword, userData.email(), json);
-    }
-
-
 
     private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -78,5 +85,4 @@ public class SQLUserDAO implements UserDAO {
             throw new DataAccessException();
         }
     }
-
 }
