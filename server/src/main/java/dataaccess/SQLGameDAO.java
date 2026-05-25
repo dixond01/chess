@@ -104,7 +104,7 @@ public class SQLGameDAO implements GameDAO {
         String newBlackUsername = gameData.blackUsername();
         String gameName = gameData.gameName();
         String newGame = new Gson().toJson(gameData.game());
-        executeUpdate(statement, newWhiteUsername, newBlackUsername, gameName, newGame);
+        executeUpdate(statement, newWhiteUsername, newBlackUsername, gameName, newGame, gameData.gameID());
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {

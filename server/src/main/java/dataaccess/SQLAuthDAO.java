@@ -57,6 +57,7 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT authToken, json FROM auths WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         var json = rs.getString("json");
