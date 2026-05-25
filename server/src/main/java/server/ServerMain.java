@@ -14,9 +14,9 @@ public class ServerMain {
                 port = Integer.parseInt(args[0]);
             }
 
-            AuthDAO authDAO = new MemoryAuthDAO();
-            GameDAO gameDAO = new MemoryGameDAO();
-            UserDAO userDAO = new MemoryUserDAO();
+            AuthDAO authDAO = new SQLAuthDAO();
+            GameDAO gameDAO = new SQLGameDAO();
+            UserDAO userDAO = new SQLUserDAO();
 
             var clearService = new ClearService(userDAO, gameDAO, authDAO);
             var gameService = new GameService(gameDAO, authDAO);

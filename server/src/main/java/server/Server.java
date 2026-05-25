@@ -20,9 +20,36 @@ import java.util.Objects;
 public class Server {
 
     private final Javalin javalin;
-    private static final UserDAO userDAO = new MemoryUserDAO();
-    private static final GameDAO gameDAO = new MemoryGameDAO();
-    private static final AuthDAO authDAO = new MemoryAuthDAO();
+    private static final UserDAO userDAO;
+
+    static {
+        try {
+            userDAO = new SQLUserDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final GameDAO gameDAO;
+
+    static {
+        try {
+            gameDAO = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final AuthDAO authDAO;
+
+    static {
+        try {
+            authDAO = new SQLAuthDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private final ClearService clearService;
     private final GameService gameService;
     private final UserService userService;

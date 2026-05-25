@@ -22,7 +22,7 @@ public class SQLUserDAO implements UserDAO {
             CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL UNIQUE,
               `password` varchar(256) NOT NULL,
-              'email' varchar(256) DEFAULT NULL UNIQUE,
+              `email` varchar(256) DEFAULT NULL UNIQUE,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`)
             )

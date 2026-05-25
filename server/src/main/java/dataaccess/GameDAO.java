@@ -2,12 +2,13 @@ package dataaccess;
 
 import model.GameData;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 public interface GameDAO {
-    void deleteAllGames();
-    List<GameData> listGames();
-    int createGame(String gameName);
-    GameData getGame(int gameID);
-    void updateGame(GameData gameData);
+    void deleteAllGames() throws DataAccessException;
+    List<GameData> listGames() throws DataAccessException;
+    int createGame(String gameName) throws DataAccessException;
+    GameData getGame(int gameID) throws DataAccessException;
+    void updateGame(GameData gameData) throws DataAccessException;
 }
