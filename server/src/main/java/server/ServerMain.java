@@ -1,10 +1,32 @@
 package server;
 
+import dataaccess.*;
+import service.ClearService;
+import service.GameService;
+import service.UserService;
+
 public class ServerMain {
     public static void main(String[] args) {
-        Server server = new Server();
-        server.run(8080);
+        try {
+            var port = 8080;
 
-        System.out.println("♕ 240 Chess Server");
-    }
+            if (args.length >= 1) {
+                port = Integer.parseInt(args[0]);
+            }
+
+            AuthDAO authDAO = new MemoryAuthDAO();
+            GameDAO gameDAO = new MemoryGameDAO();
+            UserDAO userDAO = new MemoryUserDAO();
+
+            var clearService = new ClearService(userDAO, gameDAO, authDAO);
+            var gameService = new GameService(gameDAO, authDAO);
+            var userService = new UserService(userDAO, authDAO);
+
+            var server = new Server(clearService, gameService, userService).run(port);
+            port = server;
+            System.out.printf("♕ 240 Chess Server started on port %d", port);
+        } catch (Throwable ex) {
+            System.out.printf("Unable to start server: %s%n", ex.getMessage());
+        }
+        }
 }

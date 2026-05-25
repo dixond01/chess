@@ -20,16 +20,22 @@ import java.util.Objects;
 public class Server {
 
     private final Javalin javalin;
-
-    private final UserDAO userDAO = new MemoryUserDAO();
-    private final GameDAO gameDAO = new MemoryGameDAO();
-    private final AuthDAO authDAO = new MemoryAuthDAO();
-
-    private final ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
-    private final GameService gameService = new GameService(gameDAO, authDAO);
-    private final UserService userService = new UserService(userDAO, authDAO);
+    private static final UserDAO userDAO = new MemoryUserDAO();
+    private static final GameDAO gameDAO = new MemoryGameDAO();
+    private static final AuthDAO authDAO = new MemoryAuthDAO();
+    private final ClearService clearService;
+    private final GameService gameService;
+    private final UserService userService;
 
     public Server() {
+        this(new ClearService(userDAO, gameDAO, authDAO), new GameService(gameDAO, authDAO), new UserService(userDAO, authDAO));
+    }
+
+    public Server(ClearService clearService, GameService gameService, UserService userService) {
+        this.clearService = clearService;
+        this.gameService = gameService;
+        this.userService = userService;
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", this::clear)
                 .post("/user", this::register)
@@ -54,10 +60,6 @@ public class Server {
                     ctx.status(500);
                     errorResult(e, ctx);
                 });
-
-
-        // Register your endpoints and exception handlers here.
-
     }
 
     public int run(int desiredPort) {
