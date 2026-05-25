@@ -13,6 +13,7 @@ public class MemoryUserDAO implements UserDAO {
     public UserData getUser(String username) {return users.get(username);}
 
     public void createUser(UserData userData) {
+        userData = new UserData(userData.username(), UserDAO.hashPassword(userData.password()), userData.email());
         users.put(userData.username(), userData);
     }
 

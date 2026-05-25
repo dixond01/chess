@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
@@ -35,7 +36,7 @@ public class UserService {
 
     public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException, DataAccessException {
         UserData userData = userDAO.getUser(loginRequest.username());
-        if (userData == null || !Objects.equals(userData.password(), loginRequest.password())) {
+        if (userData == null || !BCrypt.checkpw(loginRequest.password(), userData.password())) {
             throw new UnauthorizedException("username or password incorrect");
         }
         AuthData authData = authDAO.createAuth(userData.username());

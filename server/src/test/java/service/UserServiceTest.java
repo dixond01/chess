@@ -44,14 +44,14 @@ class UserServiceTest {
 
     @Test
     void testSuccessfulLogin() throws UnauthorizedException, DataAccessException {
-        userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
+        userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", UserDAO.hashPassword("password"), "email"))));
         LoginResult result = userService.login(new LoginRequest("username", "password"));
         assertEquals("username", result.username());
     }
 
     @Test
     void testInvalidUsername() throws DataAccessException {
-        userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", "password", "email"))));
+        userDAO.setUsers(new HashMap<>(Map.of("username", new UserData("username", UserDAO.hashPassword("password"), "email"))));
         assertThrows(UnauthorizedException.class, () ->
             userService.login(new LoginRequest("typo", "password"))
         );
