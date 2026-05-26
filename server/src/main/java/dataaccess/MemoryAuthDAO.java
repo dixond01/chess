@@ -17,7 +17,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
     public AuthData getAuth(String authToken) throws DataAccessException{return auths.get(authToken);}
 
-    public Map<String, AuthData> listAuths() {
+    public Map<String, AuthData> listAuths() throws DataAccessException {
         return auths;
     }
 

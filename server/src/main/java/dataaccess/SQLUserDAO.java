@@ -11,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.sql.Types.NULL;
 
@@ -67,8 +69,8 @@ public class SQLUserDAO implements UserDAO {
         executeUpdate(statement, userData.username(), hashedPassword, userData.email(), json);
     }
 
-    public List<UserData> listUsers() throws DataAccessException {
-        ArrayList<UserData> result = new ArrayList<>();
+    public Map<String, UserData> listUsers() throws DataAccessException {
+        HashMap<String, UserData> result = new HashMap<>();
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT json FROM users";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -76,7 +78,7 @@ public class SQLUserDAO implements UserDAO {
                     while (rs.next()) {
                         String json = rs.getString("json");
                         UserData userData = new Gson().fromJson(json, UserData.class);
-                        result.add(userData);
+                        result.put(userData.username(), userData);
                     }
                 }
             }

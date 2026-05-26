@@ -9,7 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.sql.Types.NULL;
 
@@ -89,8 +91,8 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
-    public List<AuthData> listAuths() throws DataAccessException {
-        ArrayList<AuthData> result = new ArrayList<>();
+    public Map<String, AuthData> listAuths() throws DataAccessException {
+        HashMap<String, AuthData> result = new HashMap<>();
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT json FROM auths";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -98,7 +100,7 @@ public class SQLAuthDAO implements AuthDAO {
                     while (rs.next()) {
                         String json = rs.getString("json");
                         AuthData authData = new Gson().fromJson(json, AuthData.class);
-                        result.add(authData);
+                        result.put(authData.authToken(), authData);
                     }
                 }
             }
