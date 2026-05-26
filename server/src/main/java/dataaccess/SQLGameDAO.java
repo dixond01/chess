@@ -67,9 +67,7 @@ public class SQLGameDAO implements GameDAO {
 
         ChessGame chessGame = new ChessGame();
         String json = new Gson().toJson(chessGame);
-        executeUpdate(statement, gameName, json);
-
-        return executeUpdate(statement);
+        return executeUpdate(statement, gameName, json);
     }
 
     @Override
