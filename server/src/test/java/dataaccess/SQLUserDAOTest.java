@@ -1,18 +1,13 @@
 package dataaccess;
 
 import model.UserData;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import java.util.Collection;
-import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class SQLUserDAOTest {
+class SQLUserDAOTest {
 
     private UserDAO getDataAccess(Class<? extends UserDAO> databaseClass) throws DataAccessException {
         UserDAO userDAO;
@@ -24,34 +19,66 @@ public class SQLUserDAOTest {
         userDAO.deleteAllUsers();
         return userDAO;
     }
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
 
     @ParameterizedTest
     @ValueSource(classes = {SQLUserDAO.class, MemoryUserDAO.class})
     void deleteAllUsers(Class<? extends UserDAO> userDAOClass) throws DataAccessException{
         UserDAO userDAO = getDataAccess(userDAOClass);
 
-        userDAO.addUser(new Pet(0, "joe", PetType.FISH));
-        userDAO.addPet(new Pet(0, "sally", PetType.CAT));
+        userDAO.createUser(new UserData("username", "password", "email"));
 
         userDAO.deleteAllUsers();
 
         Collection<UserData> actual = userDAO.listUsers().values();
         assertEquals(0, actual.size());
-
     }
 
-    @Test
-    void getUser() {
+    @ParameterizedTest
+    @ValueSource(classes = {SQLUserDAO.class, MemoryUserDAO.class})
+    void getUserSuccess(Class<? extends UserDAO> userDAOClass) throws DataAccessException{
+        UserDAO userDAO = getDataAccess(userDAOClass);
+
+        userDAO.createUser(new UserData("username", "password", "email"));
+
+        UserData userData = userDAO.getUser("username");
+
+        assertEquals("username", userData.username());
     }
 
-    @Test
-    void createUser() {
+    @ParameterizedTest
+    @ValueSource(classes = {SQLUserDAO.class, MemoryUserDAO.class})
+    void getUserFailure(Class<? extends UserDAO> userDAOClass) throws DataAccessException{
+        UserDAO userDAO = getDataAccess(userDAOClass);
+
+        assertNull(userDAO.getUser("username"));
     }
+
+    @ParameterizedTest
+    @ValueSource(classes = {SQLUserDAO.class, MemoryUserDAO.class})
+    void createUserSuccess(Class<? extends UserDAO> userDAOClass) throws DataAccessException{
+        UserDAO userDAO = getDataAccess(userDAOClass);
+
+        userDAO.createUser(new UserData("username", "password", "email"));
+
+        Collection<UserData> actual = userDAO.listUsers().values();
+
+        assertEquals(1, actual.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {SQLUserDAO.class, MemoryUserDAO.class})
+    void createUserFailure(Class<? extends UserDAO> userDAOClass) throws DataAccessException{
+        UserDAO userDAO = getDataAccess(userDAOClass);
+
+        try {
+            userDAO.createUser(new UserData("username", "password", "email"));
+            userDAO.createUser(new UserData("username", "password2", "email2"));
+        } catch (DataAccessException e) {
+            //do nothing
+        }
+        Collection<UserData> actual = userDAO.listUsers().values();
+
+        assertEquals(1, actual.size());
+    }
+
 }
