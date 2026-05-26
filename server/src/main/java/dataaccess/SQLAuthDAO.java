@@ -20,7 +20,7 @@ public class SQLAuthDAO implements AuthDAO {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  auths (
-              `username` varchar(256) UNIQUE,
+              `username` varchar(256),
               `authToken` varchar(256) NOT NULL UNIQUE,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`authToken`)
