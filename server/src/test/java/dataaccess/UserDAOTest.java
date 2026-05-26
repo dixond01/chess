@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SQLUserDAOTest {
+class UserDAOTest {
 
     private UserDAO getDataAccess(Class<? extends UserDAO> databaseClass) throws DataAccessException {
         UserDAO userDAO;
