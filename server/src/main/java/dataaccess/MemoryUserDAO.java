@@ -17,7 +17,7 @@ public class MemoryUserDAO implements UserDAO {
         users.put(userData.username(), userData);
     }
 
-    public Map<String, UserData> getUsers() {
+    public Map<String, UserData> listUsers() {
         return users;
     }
 

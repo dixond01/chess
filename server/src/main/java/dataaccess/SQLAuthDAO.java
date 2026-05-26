@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.sql.Types.NULL;
 
@@ -85,5 +87,24 @@ public class SQLAuthDAO implements AuthDAO {
         } catch (SQLException e) {
             throw new DataAccessException();
         }
+    }
+
+    public List<AuthData> listAuths() throws DataAccessException {
+        ArrayList<AuthData> result = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM auths";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String json = rs.getString("json");
+                        AuthData authData = new Gson().fromJson(json, AuthData.class);
+                        result.add(authData);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException();
+        }
+        return result;
     }
 }

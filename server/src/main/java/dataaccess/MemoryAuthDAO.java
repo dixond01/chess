@@ -4,7 +4,6 @@ import model.AuthData;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
     private HashMap<String, AuthData> auths = new HashMap<>();
@@ -18,7 +17,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
     public AuthData getAuth(String authToken) throws DataAccessException{return auths.get(authToken);}
 
-    public Map<String, AuthData> getAuths() {
+    public Map<String, AuthData> listAuths() {
         return auths;
     }
 

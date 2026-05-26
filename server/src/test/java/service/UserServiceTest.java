@@ -61,7 +61,7 @@ class UserServiceTest {
     void testSuccessfulLogout() throws UnauthorizedException, DataAccessException {
         authDAO.setAuths(new HashMap<>(Map.of("token", new AuthData("token", "username"))));
         userService.logout(new LogoutRequest("token"));
-        assertFalse(authDAO.getAuths().containsKey("token"));
+        assertFalse(authDAO.listAuths().containsKey("token"));
     }
 
     @Test

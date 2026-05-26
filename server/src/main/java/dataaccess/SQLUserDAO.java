@@ -1,6 +1,8 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import model.GameData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -8,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.sql.Types.NULL;
 
@@ -61,6 +65,25 @@ public class SQLUserDAO implements UserDAO {
         String hashedPassword = UserDAO.hashPassword(userData.password());
         String json = new Gson().toJson(new UserData(userData.username(), hashedPassword, userData.email()));
         executeUpdate(statement, userData.username(), hashedPassword, userData.email(), json);
+    }
+
+    public List<UserData> listUsers() throws DataAccessException {
+        ArrayList<UserData> result = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM users";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String json = rs.getString("json");
+                        UserData userData = new Gson().fromJson(json, UserData.class);
+                        result.add(userData);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException();
+        }
+        return result;
     }
 
 

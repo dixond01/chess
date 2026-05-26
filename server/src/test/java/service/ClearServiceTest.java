@@ -29,8 +29,8 @@ class ClearServiceTest {
         var clearService = new ClearService(userDAO, gameDAO, authDAO);
         clearService.clear();
 
-        assertTrue(userDAO.getUsers().isEmpty());
+        assertTrue(userDAO.listUsers().isEmpty());
         assertTrue(gameDAO.getGames().isEmpty());
-        assertTrue(authDAO.getAuths().isEmpty());
+        assertTrue(authDAO.listAuths().isEmpty());
     }
 }
