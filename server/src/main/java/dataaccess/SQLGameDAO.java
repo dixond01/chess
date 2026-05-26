@@ -45,13 +45,17 @@ public class SQLGameDAO implements GameDAO {
     public List<GameData> listGames() throws DataAccessException {
         ArrayList<GameData> result = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameID, json FROM games";
+            var statement = "SELECT * FROM games";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
+                        int gameID = rs.getInt("gameID");
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
+                        String gameName = rs.getString("gameName");
                         String json = rs.getString("json");
-                        GameData gameData = new Gson().fromJson(json, GameData.class);
-                        result.add(gameData);
+                        ChessGame game = new Gson().fromJson(json, ChessGame.class);
+                        result.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
                     }
                 }
             }
@@ -97,7 +101,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
-        var statement = "UPDATE games SET whiteUsername=? blackUsername=? gameName=? json=? WHERE id=?";
+        var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, json=? WHERE gameID=?";
         String newWhiteUsername = gameData.whiteUsername();
         String newBlackUsername = gameData.blackUsername();
         String gameName = gameData.gameName();
