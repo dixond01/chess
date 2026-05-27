@@ -30,7 +30,8 @@ public class GameService {
         List<GameData> games = gameDAO.listGames();
         return new ListGamesResult(games);
     }
-    public void joinGame(JoinGameRequest joinGameRequest) throws UnauthorizedException, AlreadyTakenException, BadRequestException, DataAccessException {
+    public void joinGame(JoinGameRequest joinGameRequest)
+            throws UnauthorizedException, AlreadyTakenException, BadRequestException, DataAccessException {
         AuthData authData = authDAO.getAuth(joinGameRequest.authToken());
         if (authData == null) {
             throw new UnauthorizedException();

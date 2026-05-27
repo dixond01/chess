@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static dataaccess.DatabaseManager.executeUpdate;
 import static java.sql.Types.NULL;
 
 public class SQLAuthDAO implements AuthDAO {
@@ -71,22 +72,6 @@ public class SQLAuthDAO implements AuthDAO {
             throw new DataAccessException();
         }
         return null;
-    }
-
-    private void executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param == null) ps.setNull(i + 1, NULL);
-                }
-                ps.executeUpdate();
-
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException();
-        }
     }
 
     public Map<String, AuthData> listAuths() throws DataAccessException {

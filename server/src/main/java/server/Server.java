@@ -20,31 +20,31 @@ import java.util.Objects;
 public class Server {
 
     private final Javalin javalin;
-    private static final UserDAO userDAO;
+    private static final UserDAO USER_DAO;
 
     static {
         try {
-            userDAO = new SQLUserDAO();
+            USER_DAO = new SQLUserDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static final GameDAO gameDAO;
+    private static final GameDAO GAME_DAO;
 
     static {
         try {
-            gameDAO = new SQLGameDAO();
+            GAME_DAO = new SQLGameDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static final AuthDAO authDAO;
+    private static final AuthDAO AUTH_DAO;
 
     static {
         try {
-            authDAO = new SQLAuthDAO();
+            AUTH_DAO = new SQLAuthDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +55,7 @@ public class Server {
     private final UserService userService;
 
     public Server() {
-        this(new ClearService(userDAO, gameDAO, authDAO), new GameService(gameDAO, authDAO), new UserService(userDAO, authDAO));
+        this(new ClearService(USER_DAO, GAME_DAO, AUTH_DAO), new GameService(GAME_DAO, AUTH_DAO), new UserService(USER_DAO, AUTH_DAO));
     }
 
     public Server(ClearService clearService, GameService gameService, UserService userService) {
