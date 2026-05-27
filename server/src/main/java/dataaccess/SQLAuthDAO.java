@@ -47,7 +47,9 @@ public class SQLAuthDAO implements AuthDAO {
     @Override
     public AuthData createAuth(String username) throws DataAccessException {
         var statement = "INSERT INTO auths (username, authToken, json) VALUES (?, ?, ?)";
-
+        if (username == null) {
+            throw new DataAccessException();
+        }
         String authToken = generateToken();
         AuthData authData = new AuthData(authToken, username);
         String json = new Gson().toJson(authData);

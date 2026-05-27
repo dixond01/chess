@@ -11,6 +11,9 @@ public class MemoryAuthDAO implements AuthDAO{
     public void deleteAuth(AuthData authData) throws DataAccessException {auths.remove(authData.authToken());}
     public void deleteAllAuths() throws DataAccessException {auths.clear();}
     public AuthData createAuth(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException();
+        }
         String authToken = generateToken();
         AuthData authData = new AuthData(authToken, username);
         auths.put(authToken, authData);

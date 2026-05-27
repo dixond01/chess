@@ -22,7 +22,10 @@ public class MemoryGameDAO implements GameDAO{
     public List<GameData> listGames() {return new ArrayList<>(games.values());
     }
 
-    public int createGame(String gameName) {
+    public int createGame(String gameName) throws DataAccessException{
+        if (gameName == null) {
+            throw new DataAccessException();
+        }
         int gameID = idIncrement;
         games.put(gameID, new GameData(gameID, null, null, gameName, new ChessGame()));
         idIncrement++;
@@ -31,7 +34,10 @@ public class MemoryGameDAO implements GameDAO{
 
     public GameData getGame(int gameID) {return games.get(gameID);}
 
-    public void updateGame(GameData gameData) {
+    public void updateGame(GameData gameData) throws DataAccessException{
+        if (!games.containsKey(gameData.gameID())) {
+            throw new DataAccessException("game with that id does not exist");
+        }
         games.put(gameData.gameID(), gameData);
     }
 

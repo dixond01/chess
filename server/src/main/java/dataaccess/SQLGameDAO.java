@@ -101,6 +101,9 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
+        if (getGame(gameData.gameID()) == null) {
+            throw new DataAccessException("game with that id does not exist");
+        }
         var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, json=? WHERE gameID=?";
         String newWhiteUsername = gameData.whiteUsername();
         String newBlackUsername = gameData.blackUsername();
