@@ -42,7 +42,7 @@ public class SQLGameDAO implements GameDAO {
     public List<GameData> listGames() throws DataAccessException {
         ArrayList<GameData> result = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM games";
+            var statement = "SELECT gameId, whiteUsername, blackUsername, gameName, json FROM games";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
