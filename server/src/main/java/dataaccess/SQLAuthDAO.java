@@ -2,15 +2,12 @@ package dataaccess;
 
 import com.google.gson.Gson;
 import model.AuthData;
-import model.UserData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.sql.Types.NULL;
@@ -18,11 +15,8 @@ import static java.sql.Types.NULL;
 public class SQLAuthDAO implements AuthDAO {
 
     public SQLAuthDAO() throws DataAccessException{
-        DatabaseManager.configureDatabase(createStatements);
-    }
-
-    private final String[] createStatements = {
-            """
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  auths (
               `username` varchar(256),
               `authToken` varchar(256) NOT NULL UNIQUE,
@@ -30,7 +24,9 @@ public class SQLAuthDAO implements AuthDAO {
               PRIMARY KEY (`authToken`)
             )
             """
-    };
+        };
+        DatabaseManager.configureDatabase(createStatements);
+    }
 
     @Override
     public void deleteAuth(AuthData authData) throws DataAccessException {

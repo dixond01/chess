@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.AuthData;
 
-import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ public class MemoryAuthDAO implements AuthDAO{
             throw new DataAccessException();
         }
         auths.remove(authData.authToken());}
-    public void deleteAllAuths() throws DataAccessException {auths.clear();}
+    public void deleteAllAuths() {auths.clear();}
     public AuthData createAuth(String username) throws DataAccessException {
         if (username == null) {
             throw new DataAccessException();
@@ -29,7 +28,7 @@ public class MemoryAuthDAO implements AuthDAO{
         }
         return auths.get(authToken);}
 
-    public Map<String, AuthData> listAuths() throws DataAccessException {
+    public Map<String, AuthData> listAuths() {
         return auths;
     }
 

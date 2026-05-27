@@ -22,10 +22,9 @@ public class ServerMain {
             var gameService = new GameService(gameDAO, authDAO);
             var userService = new UserService(userDAO, authDAO);
 
-            var server = new Server(clearService, gameService, userService).run(port);
-            port = server;
+            port = new Server(clearService, gameService, userService).run(port);
             System.out.printf("♕ 240 Chess Server started on port %d", port);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             System.out.printf("Unable to start server: %s%n", ex.getMessage());
         }
         }

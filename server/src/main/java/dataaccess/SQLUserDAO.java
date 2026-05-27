@@ -1,18 +1,13 @@
 package dataaccess;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
-import model.GameData;
 import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.sql.Types.NULL;
@@ -20,11 +15,8 @@ import static java.sql.Types.NULL;
 public class SQLUserDAO implements UserDAO {
 
     public SQLUserDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase(createStatements);
-    }
-
-    private final String[] createStatements = {
-            """
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL UNIQUE,
               `password` varchar(256) NOT NULL,
@@ -33,7 +25,9 @@ public class SQLUserDAO implements UserDAO {
               PRIMARY KEY (`username`)
             )
             """
-    };
+        };
+        DatabaseManager.configureDatabase(createStatements);
+    }
 
     @Override
     public void deleteAllUsers() throws DataAccessException {

@@ -10,9 +10,6 @@ import service.request.RegisterRequest;
 import service.result.LoginResult;
 import service.result.RegisterResult;
 
-import javax.xml.crypto.Data;
-import java.util.Objects;
-
 public class UserService {
     private final UserDAO userDAO;
 

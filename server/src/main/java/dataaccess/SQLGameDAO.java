@@ -2,10 +2,8 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,11 +17,8 @@ import static java.sql.Types.NULL;
 public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase(createStatements);
-    }
-
-    private final String[] createStatements = {
-            """
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  games (
               `gameID` int NOT NULL AUTO_INCREMENT,
               `whiteUsername` varchar(256) DEFAULT NULL,
@@ -33,7 +28,9 @@ public class SQLGameDAO implements GameDAO {
               PRIMARY KEY (`gameID`)
             )
             """
-    };
+        };
+        DatabaseManager.configureDatabase(createStatements);
+    }
 
     @Override
     public void deleteAllGames() throws DataAccessException {
