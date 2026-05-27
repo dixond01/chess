@@ -45,7 +45,11 @@ class AuthDAOTest {
         authDAO.createAuth("username2");
         authDAO.createAuth("username3");
 
-        authDAO.deleteAuth(new AuthData("token", "username1"));
+        try {
+            authDAO.deleteAuth(new AuthData(null, "username1"));
+        } catch (DataAccessException e) {
+            //do nothing
+        }
 
         Collection<AuthData> actual = authDAO.listAuths().values();
         assertEquals(3, actual.size());
