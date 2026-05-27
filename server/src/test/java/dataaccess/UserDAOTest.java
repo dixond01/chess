@@ -70,15 +70,8 @@ class UserDAOTest {
     void createUserFailure(Class<? extends UserDAO> userDAOClass) throws DataAccessException{
         UserDAO userDAO = getDataAccess(userDAOClass);
 
-        try {
-            userDAO.createUser(new UserData("username", "password", "email"));
-            userDAO.createUser(new UserData("username", "password2", "email2"));
-        } catch (DataAccessException e) {
-            //do nothing
-        }
-        Collection<UserData> actual = userDAO.listUsers().values();
-
-        assertEquals(1, actual.size());
+        assertThrows(DataAccessException.class, () ->
+                userDAO.createUser(new UserData(null, "password", "email")));
     }
 
 }
