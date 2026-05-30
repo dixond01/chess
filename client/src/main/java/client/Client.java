@@ -31,7 +31,7 @@ public interface Client {
         System.out.println();
     }
 
-    private void printPrompt() {
+    default void printPrompt() {
         System.out.print("\n" + RESET + ">>> " + GREEN);
     }
 

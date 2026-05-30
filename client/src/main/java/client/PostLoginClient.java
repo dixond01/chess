@@ -96,7 +96,7 @@ public class PostLoginClient implements Client{
         int listID = Integer.parseInt(params[1]);
         server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], listID));
         GameData game = gamesList.get(listID);
-        new GameplayClient(server, game).run;
+        new GameplayClient(server, game, ParticipantType.PLAYER).run();
         return null;
     }
 
@@ -106,7 +106,7 @@ public class PostLoginClient implements Client{
         }
         int listID = Integer.parseInt(params[1]);
         GameData game = gamesList.get(listID);
-        new GameplayClient(server, game).observe;
+        new GameplayClient(server, game, ParticipantType.OBSERVER).run();
         return null;
     }
 

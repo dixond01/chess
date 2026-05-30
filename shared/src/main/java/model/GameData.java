@@ -13,6 +13,6 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
         if (blackPlayer == null) {
             blackPlayer = "none";
         }
-        return String.format("Name: %s, White Player: %s, Black Player: %s", gameName, whitePlayer, blackPlayer);
+        return String.format("Game: %s, White Player: %s, Black Player: %s", gameName, whitePlayer, blackPlayer);
     }
 }
