@@ -16,6 +16,8 @@ public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
+    private String authToken;
+
     public ServerFacade(String port) {
         serverUrl = String.format("http://localhost:%s", port);
     }
@@ -116,5 +118,13 @@ public class ServerFacade {
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 }
