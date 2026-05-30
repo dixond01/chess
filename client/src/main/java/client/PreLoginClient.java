@@ -18,12 +18,8 @@ public class PreLoginClient implements Client{
     }
 
     @Override
-    public String evaluateCommand(String cmd, String[] params) {
-        return switch (cmd) {
-            case ("login") -> login(params);
-            case ("register") -> register(params);
-            default -> null;
-        };
+    public String startMessage() {
+        return "Welcome to chess!";
     }
 
     @Override
@@ -36,8 +32,12 @@ public class PreLoginClient implements Client{
     }
 
     @Override
-    public String startMessage() {
-        return "Welcome to chess!";
+    public String evaluateCommand(String cmd, String[] params) {
+        return switch (cmd) {
+            case ("login") -> login(params);
+            case ("register") -> register(params);
+            default -> null;
+        };
     }
 
     //login

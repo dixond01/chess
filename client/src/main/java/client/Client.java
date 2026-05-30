@@ -49,16 +49,14 @@ public interface Client {
                 String result = evaluateCommand(cmd, params);
                 return (result != null) ? result : help();
             }
-        } catch (DataAccessException ex) {
+        } catch (Exception ex) {
             return ex.getMessage();
         }
     }
 
+    String startMessage();
+
     String help();
 
     String evaluateCommand(String cmd, String[] params);
-
-    String startMessage();
-
-
 }
