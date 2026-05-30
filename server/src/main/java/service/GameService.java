@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
+import model.DataAccessException;
 import model.GameData;
 import service.request.CreateGameRequest;
 import service.request.JoinGameRequest;

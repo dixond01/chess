@@ -2,20 +2,19 @@ package dataaccess;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.DataAccessException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static dataaccess.DatabaseManager.executeUpdate;
-import static java.sql.Types.NULL;
 
 public class SQLAuthDAO implements AuthDAO {
 
-    public SQLAuthDAO() throws DataAccessException{
+    public SQLAuthDAO() throws DataAccessException {
         String[] createStatements = {
                 """
             CREATE TABLE IF NOT EXISTS  auths (

@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
+import model.DataAccessException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import service.request.LoginRequest;
@@ -20,7 +21,7 @@ public class UserService {
         this.authDAO = authDAO;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException{
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException {
         UserData userData = userDAO.getUser(registerRequest.username());
         if (userData != null) {
             throw new AlreadyTakenException("username already taken");

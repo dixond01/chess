@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import model.DataAccessException;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class MemoryGameDAO implements GameDAO{
     public List<GameData> listGames() {return new ArrayList<>(games.values());
     }
 
-    public int createGame(String gameName) throws DataAccessException{
+    public int createGame(String gameName) throws DataAccessException {
         if (gameName == null) {
             throw new DataAccessException();
         }

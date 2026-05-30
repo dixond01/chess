@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
+import model.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class UserServiceTest {
         userService = new UserService(userDAO, authDAO);
     }
     @Test
-    void testSuccessfulRegister() throws AlreadyTakenException, DataAccessException{
+    void testSuccessfulRegister() throws AlreadyTakenException, DataAccessException {
         RegisterResult result = userService.register(new RegisterRequest("username", "password", "email"));
 
         assertEquals("username", result.username());

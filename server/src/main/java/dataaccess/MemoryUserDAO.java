@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.DataAccessException;
 import model.UserData;
 
 import java.util.HashMap;
@@ -12,7 +13,7 @@ public class MemoryUserDAO implements UserDAO {
 
     public UserData getUser(String username) {return users.get(username);}
 
-    public void createUser(UserData userData) throws DataAccessException{
+    public void createUser(UserData userData) throws DataAccessException {
         if (userData.username() == null || userData.password() == null) {
             throw new DataAccessException();
         }

@@ -1,17 +1,16 @@
 package dataaccess;
 
 import com.google.gson.Gson;
+import model.DataAccessException;
 import model.UserData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static dataaccess.DatabaseManager.executeUpdate;
-import static java.sql.Types.NULL;
 
 public class SQLUserDAO implements UserDAO {
 

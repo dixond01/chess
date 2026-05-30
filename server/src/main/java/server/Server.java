@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import model.DataAccessException;
 import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
