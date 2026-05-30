@@ -26,7 +26,7 @@ public class PreLoginClient implements Client{
     public String help() {
         return """
                 - login <username> <password>
-                - register <username> <password> (optional:)<email>
+                - register <username> <password> <email>
                 - help
                 - quit
                 """;
@@ -40,6 +40,12 @@ public class PreLoginClient implements Client{
             case ("help") -> help();
             default -> null;
         };
+    }
+
+    @Override
+    public void quit() {
+        System.out.println("Thank you for playing!");
+        System.exit(0);
     }
 
     private String login(String[] params) throws DataAccessException{
@@ -56,7 +62,7 @@ public class PreLoginClient implements Client{
 
     private String register(String[] params) throws DataAccessException {
         if (params.length < 2) {
-            return "Please include a username, password, and an optional email to register.";
+            return "Please include a username, password, and an email to register.";
         }
         if (params.length < 3) {
             params = Arrays.copyOf(params, 3);
@@ -65,7 +71,7 @@ public class PreLoginClient implements Client{
         RegisterResult registerResult = server.register(new RegisterRequest(params[0], params[1], params[2]));
         server.setAuthToken(registerResult.authToken());
         server.setUsername(registerResult.username());
-        System.out.printf("Welcome to chess, %s!", registerResult.username());
+        System.out.printf("Welcome to chess, %s!%n", registerResult.username());
         new PostLoginClient(server).run();
         return null;
     }

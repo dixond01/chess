@@ -8,7 +8,7 @@ import static ui.EscapeSequences.*;
 
 public interface Client {
     default void run() {
-        System.out.print(startMessage());
+        System.out.println(startMessage());
         System.out.print(help());
 
         Scanner scanner = new Scanner(System.in);
@@ -27,6 +27,11 @@ public interface Client {
                 var msg = e.toString();
                 System.out.print(msg);
             }
+        }
+        try {
+            quit();
+        } catch (Exception e) {
+            System.exit(0);
         }
         System.out.println();
     }
@@ -59,4 +64,6 @@ public interface Client {
     String help();
 
     String evaluateCommand(String cmd, String[] params) throws DataAccessException;
+
+    void quit() throws DataAccessException;
 }

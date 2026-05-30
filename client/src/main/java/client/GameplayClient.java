@@ -58,6 +58,12 @@ public class GameplayClient implements Client {
         }
     }
 
+    @Override
+    public void quit() {
+        System.out.println("Leaving game and returning to selection screen...");
+        new PostLoginClient(server).run();
+    }
+
     private void printWhiteBoard() { }
     private void printBlackBoard() { }
 }
