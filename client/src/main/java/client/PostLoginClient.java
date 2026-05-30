@@ -5,12 +5,15 @@ import model.DataAccessException;
 import model.GameData;
 import server.ServerFacade;
 import service.request.CreateGameRequest;
+import service.request.JoinGameRequest;
 import service.request.ListGamesRequest;
 import service.request.LogoutRequest;
 import service.result.CreateGameResult;
 import service.result.ListGamesResult;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class PostLoginClient implements Client{
 
@@ -32,7 +35,7 @@ public class PostLoginClient implements Client{
                 - logout
                 - create <gameName>
                 - list
-                - play <gameID>
+                - play <team color (WHITE or BLACK)> <gameID>
                 - observe <gameID>
                 - help
                 - quit
@@ -79,6 +82,22 @@ public class PostLoginClient implements Client{
             gamesString.append(String.format("[%d]: %s ", i, gamesList.get(i).toString()));
         }
         return gamesString.toString();
+    }
+
+    private String playGame(String[] params) throws DataAccessException {
+        if (params.length < 2) {
+            return "Please include team color and gameID";
+        }
+        if ("white".equalsIgnoreCase(params[0])) {
+            params[0] = "WHITE";
+        } else if ("black".equalsIgnoreCase(params[0])) {
+            params[0] = "BLACK";
+        }
+        int listID = Integer.parseInt(params[1]);
+        server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], listID));
+        GameData game = gamesList.get(listID);
+        new GameplayClient(server, game).run;
+        return null;
     }
 
 }
