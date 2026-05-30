@@ -48,6 +48,7 @@ public class PreLoginClient implements Client{
         try {
             LoginResult loginResult = server.login(new LoginRequest(params[0], params[1]));
             server.setAuthToken(loginResult.authToken());
+            server.setUsername(loginResult.username());
             System.out.printf("Welcome to chess, %s!", loginResult.username());
             new PostLoginClient(server).run();
             return null;
@@ -67,6 +68,7 @@ public class PreLoginClient implements Client{
         try {
             RegisterResult registerResult = server.register(new RegisterRequest(params[0], params[1], params[2]));
             server.setAuthToken(registerResult.authToken());
+            server.setUsername(registerResult.username());
             System.out.printf("Welcome to chess, %s!", registerResult.username());
             new PostLoginClient(server).run();
             return null;

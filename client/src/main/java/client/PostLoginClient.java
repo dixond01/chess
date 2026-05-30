@@ -42,4 +42,13 @@ public class PostLoginClient implements Client{
             default -> null;
         };
     }
+
+    private String logout() {
+        try {
+            server.logout(new LogoutRequest(server.getAuthToken()));
+            server.setAuthToken(null);
+        } catch (DataAccessException e) {
+
+        }
+    }
 }

@@ -16,7 +16,9 @@ public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
-    private String authToken;
+    private String authToken = null;
+
+    private String username = null;
 
     public ServerFacade(String port) {
         serverUrl = String.format("http://localhost:%s", port);
@@ -126,5 +128,13 @@ public class ServerFacade {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
