@@ -16,8 +16,8 @@ public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
-    public ServerFacade(int port) {
-        serverUrl = String.format("http://localhost:%d", port);
+    public ServerFacade(String port) {
+        serverUrl = String.format("http://localhost:%s", port);
     }
 
     public void clear() throws DataAccessException {
