@@ -100,4 +100,14 @@ public class PostLoginClient implements Client{
         return null;
     }
 
+    private String observeGame(String[] params) throws DataAccessException {
+        if (params.length < 1) {
+            return "Please include gameID";
+        }
+        int listID = Integer.parseInt(params[1]);
+        GameData game = gamesList.get(listID);
+        new GameplayClient(server, game).observe;
+        return null;
+    }
+
 }
