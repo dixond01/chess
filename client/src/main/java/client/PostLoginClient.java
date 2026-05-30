@@ -31,7 +31,7 @@ public class PostLoginClient implements Client{
     }
 
     @Override
-    public String evaluateCommand(String cmd, String[] params) {
+    public String evaluateCommand(String cmd, String[] params) throws DataAccessException{
         return switch (cmd) {
             case ("logout") -> logout();
             case ("create") -> createGame(params);
@@ -43,12 +43,8 @@ public class PostLoginClient implements Client{
         };
     }
 
-    private String logout() {
-        try {
-            server.logout(new LogoutRequest(server.getAuthToken()));
-            server.setAuthToken(null);
-        } catch (DataAccessException e) {
-
-        }
+    private String logout() throws DataAccessException {
+        server.logout(new LogoutRequest(server.getAuthToken()));
+        server.setAuthToken(null);
     }
 }

@@ -58,5 +58,5 @@ public interface Client {
 
     String help();
 
-    String evaluateCommand(String cmd, String[] params);
+    String evaluateCommand(String cmd, String[] params) throws DataAccessException;
 }
