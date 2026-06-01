@@ -15,7 +15,7 @@ public interface Client {
         var result = "";
         while (!result.equals("quit")) {
             printPrompt();
-            String line = scanner.nextLine();
+            String line = scanner.nextLine().trim();
 
             try {
                 result = eval(line);

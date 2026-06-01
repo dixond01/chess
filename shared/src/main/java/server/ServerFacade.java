@@ -1,6 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import model.DataAccessException;
 import service.request.*;
 import service.result.*;
@@ -10,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 public class ServerFacade {
 
@@ -105,7 +108,8 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             var body = response.body();
             if (body != null) {
-                throw new DataAccessException();
+                JsonObject json = JsonParser.parseString(body).getAsJsonObject();
+                throw new DataAccessException(json.get("message").getAsString());
             }
 
             throw new DataAccessException();

@@ -26,7 +26,7 @@ public class PostLoginClient implements Client{
 
     @Override
     public String startMessage() {
-        return "Please input an action:";
+        return "\nPlease input an action:";
     }
 
     @Override
@@ -79,14 +79,17 @@ public class PostLoginClient implements Client{
             return "No games to display.";
         }
         for (int i = 0; i < gamesList.size(); i++) {
-            gamesString.append(String.format("[%d]: %s ", i, gamesList.get(i).toString()));
+            gamesString.append(String.format("[%d]: %s%n", i + 1, gamesList.get(i).toString()));
         }
         return gamesString.toString();
     }
 
     private String playGame(String[] params) throws DataAccessException {
+        if (gamesList == null || gamesList.isEmpty()) {
+            return "Please list games first.";
+        }
         if (params.length < 2) {
-            return "Please include team color and gameID";
+            return "Please include team color and gameID.";
         }
         if ("white".equalsIgnoreCase(params[0])) {
             params[0] = "WHITE";
@@ -94,19 +97,30 @@ public class PostLoginClient implements Client{
             params[0] = "BLACK";
         }
         int listID = Integer.parseInt(params[1]);
-        server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], listID));
-        GameData game = gamesList.get(listID);
-        new GameplayClient(server, game, ParticipantType.PLAYER).run();
+        try {
+            GameData game = gamesList.get(listID - 1);
+            server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], game.gameID()));
+            new GameplayClient(server, game, ParticipantType.PLAYER).run();
+        } catch (IndexOutOfBoundsException e) {
+            return "Please include a valid gameID.";
+        }
         return null;
     }
 
     private String observeGame(String[] params) throws DataAccessException {
-        if (params.length < 1) {
-            return "Please include gameID";
+        if (gamesList == null || gamesList.isEmpty()) {
+            return "Please list games first.";
         }
-        int listID = Integer.parseInt(params[1]);
-        GameData game = gamesList.get(listID);
-        new GameplayClient(server, game, ParticipantType.OBSERVER).run();
+        if (params.length < 1) {
+            return "Please include gameID.";
+        }
+        int listID = Integer.parseInt(params[0]);
+        try {
+            GameData game = gamesList.get(listID - 1);
+            new GameplayClient(server, game, ParticipantType.OBSERVER).run();
+        } catch (IndexOutOfBoundsException e) {
+            return "Please include a valid gameID.";
+        }
         return null;
     }
 

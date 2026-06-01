@@ -40,11 +40,11 @@ public class GameService {
 
         GameData gameData = gameDAO.getGame(joinGameRequest.gameID());
         if (gameData == null) {
-            throw new BadRequestException("must enter valid gameID");
+            throw new BadRequestException("must enter valid gameID.");
         }
-        if ((Objects.equals(joinGameRequest.playerColor(), "WHITE") && (gameData.whiteUsername() != null))
-        || (Objects.equals(joinGameRequest.playerColor(), "BLACK") && (gameData.blackUsername() != null)))  {
-            throw new AlreadyTakenException("color already taken");
+        if ((Objects.equals(joinGameRequest.playerColor(), "WHITE") && (gameData.whiteUsername() != null) && (!Objects.equals(gameData.whiteUsername(), authData.username()))
+        || (Objects.equals(joinGameRequest.playerColor(), "BLACK") && (gameData.blackUsername() != null) && (!Objects.equals(gameData.blackUsername(), authData.username())))))  {
+            throw new AlreadyTakenException("color already taken.");
         }
 
         String whiteUsername = gameData.whiteUsername();
