@@ -8,7 +8,7 @@ import static ui.EscapeSequences.*;
 
 public interface Client {
     default void run() {
-        System.out.println(startMessage());
+        System.out.printf("%s%s%n", SET_TEXT_COLOR_WHITE, startMessage());
         System.out.print(help());
 
         Scanner scanner = new Scanner(System.in);
@@ -22,10 +22,10 @@ public interface Client {
                 if (result == null) {
                     return;
                 }
-                System.out.print(BLUE + result);
+                System.out.println(SET_TEXT_COLOR_LIGHT_GREY + result + SET_TEXT_COLOR_WHITE);
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(msg);
+                System.out.println(SET_TEXT_COLOR_RED + msg + SET_TEXT_COLOR_WHITE);
             }
         }
         try {
@@ -37,7 +37,7 @@ public interface Client {
     }
 
     default void printPrompt() {
-        System.out.print("\n" + RESET + ">>> " + GREEN);
+        System.out.print(SET_TEXT_COLOR_GREEN + ">>> ");
     }
 
     default String eval(String input) {

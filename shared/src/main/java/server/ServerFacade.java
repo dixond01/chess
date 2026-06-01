@@ -112,7 +112,7 @@ public class ServerFacade {
                 throw new DataAccessException(json.get("message").getAsString());
             }
 
-            throw new DataAccessException();
+            throw new DataAccessException("Error: something went wrong.");
         }
 
         if (responseClass != null) {

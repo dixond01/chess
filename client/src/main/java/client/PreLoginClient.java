@@ -7,6 +7,7 @@ import service.request.LoginRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;
 import service.result.RegisterResult;
+import static ui.EscapeSequences.*;
 
 import java.util.Arrays;
 
@@ -19,7 +20,7 @@ public class PreLoginClient implements Client{
 
     @Override
     public String startMessage() {
-        return "Welcome to chess!";
+        return "Welcome to chess! Please login.";
     }
 
     @Override
@@ -55,7 +56,7 @@ public class PreLoginClient implements Client{
         LoginResult loginResult = server.login(new LoginRequest(params[0], params[1]));
         server.setAuthToken(loginResult.authToken());
         server.setUsername(loginResult.username());
-        System.out.printf("Welcome to chess, %s!", loginResult.username());
+        System.out.printf("%sWelcome to chess, %s!%s", SET_TEXT_COLOR_LIGHT_GREY, loginResult.username(), SET_TEXT_COLOR_WHITE);
         new PostLoginClient(server).run();
         return null;
     }
@@ -71,7 +72,7 @@ public class PreLoginClient implements Client{
         RegisterResult registerResult = server.register(new RegisterRequest(params[0], params[1], params[2]));
         server.setAuthToken(registerResult.authToken());
         server.setUsername(registerResult.username());
-        System.out.printf("Welcome to chess, %s!%n", registerResult.username());
+        System.out.printf("%sWelcome to chess, %s!%s", SET_TEXT_COLOR_LIGHT_GREY, registerResult.username(), SET_TEXT_COLOR_WHITE);
         new PostLoginClient(server).run();
         return null;
     }

@@ -49,7 +49,7 @@ public class SQLUserDAO implements UserDAO {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException();
+            throw new DataAccessException("Please enter valid username and password.");
         }
         return null;
     }
@@ -60,7 +60,11 @@ public class SQLUserDAO implements UserDAO {
 
         String hashedPassword = UserDAO.hashPassword(userData.password());
         String json = new Gson().toJson(new UserData(userData.username(), hashedPassword, userData.email()));
-        executeUpdate(statement, userData.username(), hashedPassword, userData.email(), json);
+        try {
+            executeUpdate(statement, userData.username(), hashedPassword, userData.email(), json);
+        } catch (DataAccessException e) {
+            throw new DataAccessException("An error occurred. Your email may have already been taken.");
+        }
     }
 
     public Map<String, UserData> listUsers() throws DataAccessException {
