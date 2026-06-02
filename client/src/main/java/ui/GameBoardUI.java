@@ -44,6 +44,9 @@ public class GameBoardUI {
             printHeader(out, ChessGame.TeamColor.BLACK);
         }
 
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
+        out.println();
     }
 
     private void printHeader(PrintStream out, ChessGame.TeamColor color) {
@@ -74,7 +77,7 @@ public class GameBoardUI {
             setBorderColor(out);
             out.print(pad(numbers.get(rowIndex)));
 
-            setBlack(out);
+            resetColor(out);
             printEndOfRow(out);
         }
     }
@@ -137,9 +140,9 @@ public class GameBoardUI {
         return String.format(" %s ", character);
     }
 
-    private void setBlack(PrintStream out) {
-        out.print(SET_TEXT_COLOR_BLACK);
-        out.print(SET_BG_COLOR_BLACK);
+    private void resetColor(PrintStream out) {
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
     }
 
     private void setBorderColor(PrintStream out) {
@@ -156,7 +159,7 @@ public class GameBoardUI {
     }
 
     private void printEndOfRow(PrintStream out) {
-        setBlack(out);
+        resetColor(out);
         out.println();
     }
 
