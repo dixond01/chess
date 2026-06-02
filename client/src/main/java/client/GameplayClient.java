@@ -1,27 +1,25 @@
 package client;
 
+import chess.ChessGame;
 import model.DataAccessException;
 import model.GameData;
 import server.ServerFacade;
-
-import java.util.Scanner;
-
-import static ui.EscapeSequences.BLUE;
+import ui.GameBoardUI;
 
 public class GameplayClient implements Client {
-    private ParticipantType participant;
+    private final ParticipantType participant;
     private final ServerFacade server;
-    private GameData game;
+    private final GameData gameData;
 
-    public GameplayClient(ServerFacade server, GameData game, ParticipantType participant) {
+    public GameplayClient(ServerFacade server, GameData gameData, ParticipantType participant) {
         this.server = server;
-        this.game = game;
+        this.gameData = gameData;
         this.participant = participant;
     }
 
     @Override
     public String startMessage() {
-        return String.format("Welcome! %s", game.toString());
+        return String.format("Welcome! %s", gameData.toString());
     }
 
     @Override
@@ -64,6 +62,12 @@ public class GameplayClient implements Client {
         new PostLoginClient(server).run();
     }
 
-    private void printWhiteBoard() { }
-    private void printBlackBoard() { }
+    private void printWhiteBoard() {
+        var UI = new GameBoardUI(gameData.game(), ChessGame.TeamColor.WHITE);
+        UI.drawGame();
+    }
+    private void printBlackBoard() {
+        var UI = new GameBoardUI(gameData.game(), ChessGame.TeamColor.BLACK);
+        UI.drawGame();
+    }
 }

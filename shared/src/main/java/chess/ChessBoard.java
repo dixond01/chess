@@ -10,7 +10,15 @@ import java.util.Arrays;
  */
 public class ChessBoard {
 
-    ChessPiece[][] squares = new ChessPiece[8][8];
+    public ChessPiece[][] getSquares() {
+        return squares;
+    }
+
+    public void setSquares(ChessPiece[][] squares) {
+        this.squares = squares;
+    }
+
+    private ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
     }
 
