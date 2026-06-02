@@ -37,6 +37,10 @@ public class GameBoardUI {
             printHeader(out, ChessGame.TeamColor.WHITE);
             printRows(out, ChessGame.TeamColor.WHITE);
             printHeader(out, ChessGame.TeamColor.WHITE);
+        } else {
+            printHeader(out, ChessGame.TeamColor.BLACK);
+            printRows(out, ChessGame.TeamColor.BLACK);
+            printHeader(out, ChessGame.TeamColor.BLACK);
         }
 
     }
