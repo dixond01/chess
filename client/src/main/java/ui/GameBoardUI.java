@@ -6,6 +6,7 @@ import chess.ChessPiece;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static ui.EscapeSequences.*;
@@ -162,8 +163,8 @@ public class GameBoardUI {
     private ChessPiece[][] reverseSquares(ChessPiece[][] squares) {
         List<ChessPiece[]> rowsReversed = new ArrayList<>();
         for (ChessPiece[] row : squares) {
-            List<ChessPiece> rowAsList = new ArrayList<>(List.of(row));
-           rowsReversed.add(rowAsList.reversed().toArray(new ChessPiece[0]));
+            List<ChessPiece> rowAsList = new ArrayList<>(Arrays.asList(row));
+            rowsReversed.add(rowAsList.reversed().toArray(new ChessPiece[0]));
         }
         return rowsReversed.reversed().toArray(new ChessPiece[8][0]);
     }
