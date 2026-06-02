@@ -36,19 +36,38 @@ public class ServerFacade {
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         var request = buildRequest("POST", "/user", registerRequest, null);
         var response = sendRequest(request);
-        return handleResponse(response, RegisterResult.class);
+        RegisterResult registerResult = handleResponse(response, RegisterResult.class);
+        if (registerResult != null) {
+            if (registerResult.authToken() != null) {
+                this.authToken = registerResult.authToken();
+            }
+            if (registerResult.username() != null) {
+                this.username = registerResult.username();
+            }
+        }
+        return registerResult;
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         var request = buildRequest("POST","/session", loginRequest, null);
         var response = sendRequest(request);
-        return handleResponse(response, LoginResult.class);
+        LoginResult loginResult = handleResponse(response, LoginResult.class);
+        if (loginResult != null) {
+            if (loginResult.authToken() != null) {
+                this.authToken = loginResult.authToken();
+            }
+            if (loginResult.username() != null) {
+                this.username = loginResult.username();
+            }
+        }
+        return loginResult;
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
         var request = buildRequest( "DELETE", "/session", null, logoutRequest.authToken());
         var response = sendRequest(request);
         handleResponse(response, null);
+        this.authToken = null;
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException {

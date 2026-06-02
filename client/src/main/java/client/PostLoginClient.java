@@ -128,8 +128,8 @@ public class PostLoginClient implements Client{
     @Override
     public void quit() throws DataAccessException {
         server.logout(new LogoutRequest(server.getAuthToken()));
-        server.setAuthToken(null);
         System.out.printf("See you later, %s!%n", server.getUsername());
+        server.setUsername(null);
         System.exit(0);
     }
 

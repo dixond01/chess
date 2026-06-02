@@ -54,8 +54,6 @@ public class PreLoginClient implements Client{
             return "Please include both a username and password.";
         }
         LoginResult loginResult = server.login(new LoginRequest(params[0], params[1]));
-        server.setAuthToken(loginResult.authToken());
-        server.setUsername(loginResult.username());
         System.out.printf("%sWelcome to chess, %s!%s", SET_TEXT_COLOR_LIGHT_GREY, loginResult.username(), SET_TEXT_COLOR_WHITE);
         new PostLoginClient(server).run();
         return null;
@@ -70,8 +68,6 @@ public class PreLoginClient implements Client{
             params[2] = null;
         }
         RegisterResult registerResult = server.register(new RegisterRequest(params[0], params[1], params[2]));
-        server.setAuthToken(registerResult.authToken());
-        server.setUsername(registerResult.username());
         System.out.printf("%sWelcome to chess, %s!%s", SET_TEXT_COLOR_LIGHT_GREY, registerResult.username(), SET_TEXT_COLOR_WHITE);
         new PostLoginClient(server).run();
         return null;
