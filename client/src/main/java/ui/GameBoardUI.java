@@ -146,16 +146,16 @@ public class GameBoardUI {
     }
 
     private void setBorderColor(PrintStream out) {
-        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
     private void setLightBG(PrintStream out) {
-        out.print(SET_BG_COLOR_YELLOW);
+        out.print(SET_BG_COLOR_LIGHT);
     }
 
     private void setDarkBG(PrintStream out) {
-        out.print(SET_BG_COLOR_MAGENTA);
+        out.print(SET_BG_COLOR_DARK);
     }
 
     private void printEndOfRow(PrintStream out) {
