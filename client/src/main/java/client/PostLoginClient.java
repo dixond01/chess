@@ -97,13 +97,14 @@ public class PostLoginClient implements Client{
             params[0] = "BLACK";
         }
         int listID = Integer.parseInt(params[1]);
+        GameData game = null;
         try {
-            GameData game = gamesList.get(listID - 1);
-            server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], game.gameID()));
-            new GameplayClient(server, game, ParticipantType.PLAYER).run();
+            game = gamesList.get(listID - 1);
         } catch (IndexOutOfBoundsException e) {
             return "Please include a valid gameID.";
         }
+        server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], game.gameID()));
+        new GameplayClient(server, game, ParticipantType.PLAYER).run();
         return null;
     }
 

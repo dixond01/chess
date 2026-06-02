@@ -64,7 +64,7 @@ public class GameBoardUI {
         if (color == ChessGame.TeamColor.BLACK) {
             numbers = numbers.reversed();
         }
-        for (int rowIndex = 0; rowIndex < CHESS_BOARD_SIZE_IN_SQUARES; rowIndex++) {
+        for (int rowIndex = CHESS_BOARD_SIZE_IN_SQUARES - 1; rowIndex >= 0; rowIndex--) {
             setBorderColor(out);
             out.print(pad(numbers.get(rowIndex)));
 
@@ -82,7 +82,6 @@ public class GameBoardUI {
         for (int i = 0; i < CHESS_BOARD_SIZE_IN_SQUARES; i++) {
             printSquare(out, row, rowIndex, i);
         }
-        printEndOfRow(out);
     }
 
     private void printSquare(PrintStream out, ChessPiece[] row, int rowIndex, int colIndex) {
@@ -101,10 +100,14 @@ public class GameBoardUI {
             }
         }
         ChessPiece piece = row[colIndex];
-        out.print(getColorAsString(piece.getTeamColor()));
-        String pieceType = getPieceTypeAsString(piece.getPieceType());
+        if (piece == null) {
+            printEmptySpace(out);
+        } else {
+            out.print(getColorAsString(piece.getTeamColor()));
+            String pieceType = getPieceTypeAsString(piece.getPieceType());
 
-        out.print(pad(pieceType));
+            out.print(pad(pieceType));
+        }
     }
 
     private String getPieceTypeAsString(ChessPiece.PieceType type) {
