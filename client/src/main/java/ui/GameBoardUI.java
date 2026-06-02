@@ -61,7 +61,7 @@ public class GameBoardUI {
 
     private void printRows(PrintStream out, ChessGame.TeamColor color) {
         List<String> numbers = new ArrayList<>(List.of("8","7","6","5","4","3","2","1"));
-        if (color == ChessGame.TeamColor.BLACK) {
+        if (color == ChessGame.TeamColor.WHITE) {
             numbers = numbers.reversed();
         }
         for (int rowIndex = CHESS_BOARD_SIZE_IN_SQUARES - 1; rowIndex >= 0; rowIndex--) {
