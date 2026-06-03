@@ -5,7 +5,6 @@ import model.DataAccessException;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
-import server.ServerFacade;
 import service.request.*;
 import service.result.CreateGameResult;
 import service.result.ListGamesResult;

@@ -1,7 +1,6 @@
 package client;
 
 import model.DataAccessException;
-import server.ServerFacade;
 import service.request.LoginRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;

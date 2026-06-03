@@ -3,7 +3,6 @@ package client;
 import chess.ChessGame;
 import model.DataAccessException;
 import model.GameData;
-import server.ServerFacade;
 import ui.GameBoardUI;
 
 public class GameplayClient implements Client {

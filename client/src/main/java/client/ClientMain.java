@@ -1,7 +1,5 @@
 package client;
 
-import server.ServerFacade;
-
 public class ClientMain {
     public static void main(String[] args) {
         String serverPort = "8080";
