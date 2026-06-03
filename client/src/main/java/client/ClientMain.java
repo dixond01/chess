@@ -1,6 +1,5 @@
 package client;
 
-import chess.*;
 import server.ServerFacade;
 
 public class ClientMain {
@@ -12,7 +11,7 @@ public class ClientMain {
 
         try {
             new PreLoginClient(new ServerFacade(serverPort)).run();
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             System.out.printf("Unable to start server: %s%n", ex.getMessage());
         }
     }

@@ -12,8 +12,6 @@ import service.result.CreateGameResult;
 import service.result.ListGamesResult;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class PostLoginClient implements Client{
 
@@ -97,7 +95,7 @@ public class PostLoginClient implements Client{
             params[0] = "BLACK";
         }
         int listID = Integer.parseInt(params[1]);
-        GameData game = null;
+        GameData game;
         try {
             game = gamesList.get(listID - 1);
         } catch (IndexOutOfBoundsException e) {
@@ -108,7 +106,7 @@ public class PostLoginClient implements Client{
         return null;
     }
 
-    private String observeGame(String[] params) throws DataAccessException {
+    private String observeGame(String[] params) {
         if (gamesList == null || gamesList.isEmpty()) {
             return "Please list games first.";
         }
