@@ -1,12 +1,13 @@
 package client;
 
+import chess.ChessGame;
 import model.DataAccessException;
+import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
-import service.request.LoginRequest;
-import service.request.LogoutRequest;
-import service.request.RegisterRequest;
+import service.request.*;
+import service.result.ListGamesResult;
 import service.result.LoginResult;
 import service.result.RegisterResult;
 
@@ -80,6 +81,27 @@ public class ServerFacadeTests {
     void logoutFailure() {
         assertThrows(DataAccessException.class, () -> {
             serverFacade.logout(new LogoutRequest("authToken"));
+        });
+    }
+
+    void createGame(String authToken) throws DataAccessException {
+        serverFacade.createGame(new CreateGameRequest(authToken, "game1"));
+    }
+
+    @Test
+    void listGamesSuccess() throws DataAccessException {
+        String authToken = registerDefault().authToken();
+        createGame(authToken);
+        ListGamesResult actual = serverFacade.listGames(new ListGamesRequest(authToken));
+        GameData expected = new GameData(1, null, null, "game1", new ChessGame());
+        assertEquals(expected, actual.games().getFirst());
+
+    }
+
+    @Test
+    void listGamesFailure() {
+        assertThrows(DataAccessException.class, () -> {
+            serverFacade.listGames(new ListGamesRequest("token"));
         });
     }
 
