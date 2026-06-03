@@ -12,18 +12,16 @@ import service.result.ListGamesResult;
 import service.result.LoginResult;
 import service.result.RegisterResult;
 
-import javax.xml.crypto.Data;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class ServerFacadeTests {
+class ServerFacadeTests {
 
     private static Server server;
     static ServerFacade serverFacade;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
@@ -117,6 +115,25 @@ public class ServerFacadeTests {
     void createGameFailure() {
         assertThrows(DataAccessException.class, () -> {
             createGame("authToken");
+        });
+    }
+
+    @Test
+    void joinGameSuccess() throws DataAccessException{
+        String authToken = registerDefault().authToken();
+        createGame(authToken);
+        serverFacade.joinGame(new JoinGameRequest(authToken, "WHITE", 1));
+        ListGamesResult listGamesResult = serverFacade.listGames(new ListGamesRequest(authToken));
+        String actual = listGamesResult.games().getFirst().whiteUsername();
+        assertEquals("username", actual);
+    }
+
+    @Test
+    void joinGameFailure() throws DataAccessException {
+        String authToken = registerDefault().authToken();
+        createGame(authToken);
+        assertThrows(DataAccessException.class, () -> {
+            serverFacade.joinGame(new JoinGameRequest("authToken", "WHITE", 1));
         });
     }
 
