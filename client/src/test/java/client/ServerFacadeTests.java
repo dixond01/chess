@@ -50,7 +50,8 @@ class ServerFacadeTests {
     }
 
     @Test
-    void registerFailure() {
+    void registerFailure() throws DataAccessException {
+        registerDefault();
         assertThrows(DataAccessException.class, this::registerDefault);
     }
 
