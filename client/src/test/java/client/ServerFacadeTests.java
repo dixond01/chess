@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 import service.request.*;
+import service.result.CreateGameResult;
 import service.result.ListGamesResult;
 import service.result.LoginResult;
 import service.result.RegisterResult;
@@ -84,8 +85,8 @@ public class ServerFacadeTests {
         });
     }
 
-    void createGame(String authToken) throws DataAccessException {
-        serverFacade.createGame(new CreateGameRequest(authToken, "game1"));
+    CreateGameResult createGame(String authToken) throws DataAccessException {
+        return serverFacade.createGame(new CreateGameRequest(authToken, "game1"));
     }
 
     @Test
@@ -102,6 +103,20 @@ public class ServerFacadeTests {
     void listGamesFailure() {
         assertThrows(DataAccessException.class, () -> {
             serverFacade.listGames(new ListGamesRequest("token"));
+        });
+    }
+
+    @Test
+    void createGameSuccess() throws DataAccessException {
+        String authToken = registerDefault().authToken();
+        CreateGameResult actual = createGame(authToken);
+        assertEquals(1, actual.gameID());
+    }
+
+    @Test
+    void createGameFailure() {
+        assertThrows(DataAccessException.class, () -> {
+            createGame("authToken");
         });
     }
 
