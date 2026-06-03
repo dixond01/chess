@@ -9,11 +9,11 @@ import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
-import service.request.*;
-import service.result.CreateGameResult;
-import service.result.LoginResult;
-import service.result.RegisterResult;
-import service.result.ListGamesResult;
+import model.request.*;
+import model.result.CreateGameResult;
+import model.result.LoginResult;
+import model.result.RegisterResult;
+import model.result.ListGamesResult;
 
 import java.util.Map;
 import java.util.Objects;

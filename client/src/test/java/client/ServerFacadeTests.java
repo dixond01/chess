@@ -5,11 +5,11 @@ import model.DataAccessException;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
-import service.request.*;
-import service.result.CreateGameResult;
-import service.result.ListGamesResult;
-import service.result.LoginResult;
-import service.result.RegisterResult;
+import model.request.*;
+import model.result.CreateGameResult;
+import model.result.ListGamesResult;
+import model.result.LoginResult;
+import model.result.RegisterResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 

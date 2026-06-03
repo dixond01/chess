@@ -3,12 +3,12 @@ package client;
 import chess.ChessGame;
 import model.DataAccessException;
 import model.GameData;
-import service.request.CreateGameRequest;
-import service.request.JoinGameRequest;
-import service.request.ListGamesRequest;
-import service.request.LogoutRequest;
-import service.result.CreateGameResult;
-import service.result.ListGamesResult;
+import model.request.CreateGameRequest;
+import model.request.JoinGameRequest;
+import model.request.ListGamesRequest;
+import model.request.LogoutRequest;
+import model.result.CreateGameResult;
+import model.result.ListGamesResult;
 
 import java.util.ArrayList;
 

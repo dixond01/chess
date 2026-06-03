@@ -4,11 +4,11 @@ import dataaccess.*;
 import model.AuthData;
 import model.DataAccessException;
 import model.GameData;
-import service.request.CreateGameRequest;
-import service.request.JoinGameRequest;
-import service.request.ListGamesRequest;
-import service.result.CreateGameResult;
-import service.result.ListGamesResult;
+import model.request.CreateGameRequest;
+import model.request.JoinGameRequest;
+import model.request.ListGamesRequest;
+import model.result.CreateGameResult;
+import model.result.ListGamesResult;
 
 import java.util.List;
 import java.util.Objects;

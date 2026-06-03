@@ -1,10 +1,10 @@
 package client;
 
 import model.DataAccessException;
-import service.request.LoginRequest;
-import service.request.RegisterRequest;
-import service.result.LoginResult;
-import service.result.RegisterResult;
+import model.request.LoginRequest;
+import model.request.RegisterRequest;
+import model.result.LoginResult;
+import model.result.RegisterResult;
 import static ui.EscapeSequences.*;
 
 import java.util.Arrays;
