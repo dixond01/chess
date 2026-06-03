@@ -42,8 +42,12 @@ public class GameService {
         if (gameData == null) {
             throw new BadRequestException("must enter valid gameID.");
         }
-        if ((Objects.equals(joinGameRequest.playerColor(), "WHITE") && (gameData.whiteUsername() != null) && (!Objects.equals(gameData.whiteUsername(), authData.username()))
-        || (Objects.equals(joinGameRequest.playerColor(), "BLACK") && (gameData.blackUsername() != null) && (!Objects.equals(gameData.blackUsername(), authData.username())))))  {
+        if ((Objects.equals(joinGameRequest.playerColor(), "WHITE")
+                && (gameData.whiteUsername() != null)
+                && (!Objects.equals(gameData.whiteUsername(), authData.username()))
+                || (Objects.equals(joinGameRequest.playerColor(), "BLACK")
+                && (gameData.blackUsername() != null)
+                && (!Objects.equals(gameData.blackUsername(), authData.username())))))  {
             throw new AlreadyTakenException("color already taken.");
         }
 

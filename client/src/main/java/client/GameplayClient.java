@@ -62,11 +62,11 @@ public class GameplayClient implements Client {
     }
 
     private void printWhiteBoard() {
-        var UI = new GameBoardUI(gameData.game(), ChessGame.TeamColor.WHITE);
-        UI.drawGame();
+        var ui = new GameBoardUI(gameData.game(), ChessGame.TeamColor.WHITE);
+        ui.drawGame();
     }
     private void printBlackBoard() {
-        var UI = new GameBoardUI(gameData.game(), ChessGame.TeamColor.BLACK);
-        UI.drawGame();
+        var ui = new GameBoardUI(gameData.game(), ChessGame.TeamColor.BLACK);
+        ui.drawGame();
     }
 }
