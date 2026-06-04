@@ -92,6 +92,8 @@ public class PostLoginClient implements Client{
             params[0] = "WHITE";
         } else if ("black".equalsIgnoreCase(params[0])) {
             params[0] = "BLACK";
+        } else {
+            return "Please adjust format: 'play <color> <gameID>'";
         }
         int listID = Integer.parseInt(params[1]);
         GameData game;
