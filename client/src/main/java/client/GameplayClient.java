@@ -1,19 +1,33 @@
 package client;
 
 import chess.ChessGame;
+import client.websocket.ServerMessageObserver;
+import client.websocket.WebSocketFacade;
 import model.DataAccessException;
 import model.GameData;
+import server.Server;
 import ui.GameBoardUI;
+import websocket.messages.ServerMessage;
 
-public class GameplayClient implements Client {
+public class GameplayClient implements Client, ServerMessageObserver {
     private final ParticipantType participant;
     private final ServerFacade server;
-    private final GameData gameData;
+    private final WebSocketFacade ws;
+    private GameData gameData;
 
-    public GameplayClient(ServerFacade server, GameData gameData, ParticipantType participant) {
+    //could put a color field here if needed
+
+    public GameplayClient(ServerFacade server, GameData gameData, ParticipantType participant) throws DataAccessException {
         this.server = server;
         this.gameData = gameData;
         this.participant = participant;
+        this.ws = new WebSocketFacade(server.getServerUrl(), this);
+        //petshop creates the websocket here
+    }
+
+    @Override
+    public void notify(ServerMessage serverMessage) {
+
     }
 
     @Override

@@ -105,6 +105,7 @@ public class PostLoginClient implements Client{
         server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], game.gameID()));
         //Open a WebSocket connection with the server (using the /ws endpoint) in order to send and receive gameplay messages.
         //Send a CONNECT WebSocket message to the server.
+        //right now, I'm creating the websocketfacade object in the gameplayclient, so I don't know how I'll opent the websocket connection
         new GameplayClient(server, game, ParticipantType.PLAYER).run();
         return null;
     }
@@ -120,7 +121,7 @@ public class PostLoginClient implements Client{
         try {
             GameData game = gamesList.get(listID - 1);
             new GameplayClient(server, game, ParticipantType.OBSERVER).run();
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | DataAccessException e) {
             return "Please include a valid gameID.";
         }
         return null;
