@@ -39,6 +39,14 @@ public class GameplayClient implements Client {
         }
     }
 
+
+    //must support
+    //help
+    //redraw chess board
+    //leave
+    //make move
+    //resign
+    //highlight legal moves
     @Override
     public String evaluateCommand(String cmd, String[] params) throws DataAccessException {
         if (participant == ParticipantType.PLAYER) {

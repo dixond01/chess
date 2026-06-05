@@ -103,6 +103,8 @@ public class PostLoginClient implements Client{
             return "Please include a valid gameID.";
         }
         server.joinGame(new JoinGameRequest(server.getAuthToken(), params[0], game.gameID()));
+        //Open a WebSocket connection with the server (using the /ws endpoint) in order to send and receive gameplay messages.
+        //Send a CONNECT WebSocket message to the server.
         new GameplayClient(server, game, ParticipantType.PLAYER).run();
         return null;
     }
