@@ -7,6 +7,7 @@ import io.javalin.http.Context;
 import model.exception.AlreadyTakenException;
 import model.exception.DataAccessException;
 import model.exception.UnauthorizedException;
+import server.websocket.WebSocketHandler;
 import service.BadRequestException;
 import service.ClearService;
 import service.GameService;
@@ -57,6 +58,8 @@ public class Server {
     private final GameService gameService;
     private final UserService userService;
 
+    private final WebSocketHandler webSocketHandler;
+
     public Server() {
         this(new ClearService(USER_DAO, GAME_DAO, AUTH_DAO), new GameService(GAME_DAO, AUTH_DAO), new UserService(USER_DAO, AUTH_DAO));
     }
@@ -65,6 +68,8 @@ public class Server {
         this.clearService = clearService;
         this.gameService = gameService;
         this.userService = userService;
+
+        this.webSocketHandler = new WebSocketHandler();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", this::clear)
@@ -89,6 +94,11 @@ public class Server {
                 .exception(DataAccessException.class, (e, ctx) -> {
                     ctx.status(500);
                     errorResult(e, ctx);
+                })
+                .ws("/ws", ws -> {
+                    ws.onConnect(webSocketHandler);
+                    ws.onMessage(webSocketHandler);
+                    ws.onClose(webSocketHandler);
                 });
     }
 
