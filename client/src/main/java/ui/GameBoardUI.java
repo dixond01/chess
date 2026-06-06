@@ -22,10 +22,6 @@ public class GameBoardUI {
 
     public GameBoardUI(ChessGame game, ChessGame.TeamColor viewerColor) {
         this.game = game;
-        if (viewerColor == ChessGame.TeamColor.BLACK) {
-            ChessPiece[][] gameBoard = game.getBoard().getSquares();
-            game.getBoard().setSquares(reverseSquares(gameBoard));
-        }
         this.viewerColor = viewerColor;
     }
 
@@ -64,15 +60,18 @@ public class GameBoardUI {
     }
 
     private void printRows(PrintStream out, ChessGame.TeamColor color) {
-        List<String> numbers = new ArrayList<>(List.of("8","7","6","5","4","3","2","1"));
-        if (color == ChessGame.TeamColor.WHITE) {
+        List<String> numbers = new ArrayList<>(List.of("1","2","3","4","5","6","7","8"));
+        ChessPiece[][] gameBoard = game.getBoard().getSquares();
+        if (color == ChessGame.TeamColor.BLACK) {
             numbers = numbers.reversed();
+            gameBoard = reverseSquares(gameBoard);
+
         }
         for (int rowIndex = CHESS_BOARD_SIZE_IN_SQUARES - 1; rowIndex >= 0; rowIndex--) {
             setBorderColor(out);
             out.print(pad(numbers.get(rowIndex)));
 
-            printChessRow(out, game.getBoard().getSquares()[rowIndex], rowIndex);
+            printChessRow(out, gameBoard[rowIndex], rowIndex);
 
             setBorderColor(out);
             out.print(pad(numbers.get(rowIndex)));
