@@ -26,7 +26,11 @@ public class GameplayClient implements Client, ServerMessageObserver {
 
     @Override
     public void notify(ServerMessage serverMessage) {
-
+        switch (serverMessage.getServerMessageType()) {
+            case ERROR -> System.out.println(serverMessage.toString());
+            case NOTIFICATION -> System.out.println(serverMessage.toString());
+            case LOAD_GAME -> redrawChessBoard();
+        }
     }
 
     @Override

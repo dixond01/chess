@@ -3,6 +3,9 @@ package client.websocket;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import model.exception.DataAccessException;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -29,6 +32,14 @@ public class WebSocketFacade extends Endpoint {
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                     //probably have to check type and deserialize again, or do that in notify
+                    switch (serverMessage.getServerMessageType()) {
+                        case ServerMessage.ServerMessageType.ERROR ->
+                                serverMessage = new Gson().fromJson(message, ErrorMessage.class);
+                        case ServerMessage.ServerMessageType.NOTIFICATION ->
+                                serverMessage = new Gson().fromJson(message, NotificationMessage.class);
+                        case ServerMessage.ServerMessageType.LOAD_GAME ->
+                                serverMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                    }
                     observer.notify(serverMessage);
                 }
             });
