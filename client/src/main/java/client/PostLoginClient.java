@@ -88,10 +88,12 @@ public class PostLoginClient implements Client{
         if (params.length < 2) {
             return "Please include team color and gameID.";
         }
+        ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
         if ("white".equalsIgnoreCase(params[0])) {
             params[0] = "WHITE";
         } else if ("black".equalsIgnoreCase(params[0])) {
             params[0] = "BLACK";
+            color = ChessGame.TeamColor.BLACK;
         } else {
             return "Please adjust format: 'play <color> <gameID>'";
         }
@@ -106,7 +108,7 @@ public class PostLoginClient implements Client{
         //Open a WebSocket connection with the server (using the /ws endpoint) in order to send and receive gameplay messages.
         //Send a CONNECT WebSocket message to the server.
         //right now, I'm creating the websocketfacade object in the gameplayclient, so I don't know how I'll opent the websocket connection
-        new GameplayClient(server, game, ParticipantType.PLAYER).run();
+        new GameplayClient(server, game, ParticipantType.PLAYER, color).run();
         return null;
     }
 
@@ -120,7 +122,7 @@ public class PostLoginClient implements Client{
         int listID = Integer.parseInt(params[0]);
         try {
             GameData game = gamesList.get(listID - 1);
-            new GameplayClient(server, game, ParticipantType.OBSERVER).run();
+            new GameplayClient(server, game, ParticipantType.OBSERVER, ChessGame.TeamColor.WHITE).run();
         } catch (IndexOutOfBoundsException | DataAccessException e) {
             return "Please include a valid gameID.";
         }

@@ -1,7 +1,6 @@
 package client;
 
 import chess.ChessGame;
-import chess.ChessPiece;
 import chess.ChessPosition;
 import client.websocket.ServerMessageObserver;
 import client.websocket.WebSocketFacade;
@@ -10,8 +9,6 @@ import model.GameData;
 import ui.GameBoardUI;
 import websocket.messages.ServerMessage;
 
-import java.util.HashMap;
-
 public class GameplayClient implements Client, ServerMessageObserver {
     private final ParticipantType participant;
     private final ServerFacade server;
@@ -19,6 +16,9 @@ public class GameplayClient implements Client, ServerMessageObserver {
     private GameData gameData;
 
     private ChessGame.TeamColor color;
+
+    static final String POSITION_FORMAT_ERROR = "Error: please format piece position: <column (letter)><row (number)>";
+
 
     public GameplayClient(ServerFacade server, GameData gameData, ParticipantType participant, ChessGame.TeamColor color) throws DataAccessException {
         this.server = server;
@@ -47,14 +47,40 @@ public class GameplayClient implements Client, ServerMessageObserver {
         if (participant == ParticipantType.PLAYER) {
             return """
                     - help
+                    - redraw
+                    - highlight <column (letter)><row (number)>
+                    - makeMove <starting column><starting row> <ending column> <ending row>
                     - quit
                     """;
         }
         else {
             return """
                     - help
+                    - redraw
+                    - highlight <column (letter)><row (number)>
                     - quit
                     """;
+        }
+    }
+
+    @Override
+    public String evaluateCommand(String cmd, String[] params) throws DataAccessException {
+        if (participant == ParticipantType.PLAYER) {
+            return switch (cmd) {
+                case ("help") -> help();
+                case ("redraw") -> redrawChessBoard();
+                case ("highlight") -> highlightLegalMoves(params);
+                case ("makemove") -> makeMove(params);
+                default -> null;
+            };
+        }
+        else {
+            return switch (cmd) {
+                case ("help") -> help();
+                case ("redraw") -> redrawChessBoard();
+                case ("highlight") -> highlightLegalMoves(params);
+                default -> null;
+            };
         }
     }
 
@@ -66,33 +92,34 @@ public class GameplayClient implements Client, ServerMessageObserver {
     //make move
     //resign
     //highlight legal moves
-    private void redrawChessBoard() {
+    private String redrawChessBoard() {
         var ui = new GameBoardUI(gameData.game(), color);
         ui.drawGame(false, null);
+        return "";
     }
-    private void highlightLegalMoves(String positionAddress) throws DataAccessException {
-        var ui = new GameBoardUI(gameData.game(), color);
+    private String highlightLegalMoves(String[] params){
+        if (params.length < 1) {
+            return "Error: please include position to highlight moves for";
+        } else if (params.length > 3) {
+            return POSITION_FORMAT_ERROR;
+        }
+        String positionAddress = params[1];
+        if (params[2] != null) {
+            positionAddress += params[2];
+        }
         try {
             ChessPosition piecePosition = getChessPosition(positionAddress);
+            var ui = new GameBoardUI(gameData.game(), color);
             ui.drawGame(true, piecePosition);
+
+            return String.format("Highlighted possible moves for piece at position %s", positionAddress);
         } catch (DataAccessException e) {
-            System.out.println(e.getMessage());
+            return e.getMessage();
         }
     }
-    @Override
-    public String evaluateCommand(String cmd, String[] params) throws DataAccessException {
-        if (participant == ParticipantType.PLAYER) {
-            return switch (cmd) {
-                case ("help") -> help();
-                default -> null;
-            };
-        }
-        else {
-            return switch (cmd) {
-                case ("help") -> help();
-                default -> null;
-            };
-        }
+
+    private String makeMove(String[] params) throws DataAccessException {
+        return "";
     }
 
     //implements leave
@@ -103,23 +130,22 @@ public class GameplayClient implements Client, ServerMessageObserver {
     }
 
     private ChessPosition getChessPosition(String positionAddress) throws DataAccessException {
-        String formatError = "Error: please format piece position: <column (letter)><row (number)>";
         String outOfRangeError = "Error: column must be a-h, row must be 1-8";
         char[] cleanChars = positionAddress.replace(" ", "").toLowerCase().toCharArray();
         if (cleanChars.length != 2) {
             //does this have to be an error message? I'm confused.
-            throw new DataAccessException(formatError);
+            throw new DataAccessException(POSITION_FORMAT_ERROR);
         }
 
         char letter = cleanChars[0];
         if (!Character.isLetter(letter)) {
-            throw new DataAccessException(formatError);
+            throw new DataAccessException(POSITION_FORMAT_ERROR);
         }
         int col = letter - 'a' + 1;
 
         char number = cleanChars[1];
         if (!Character.isDigit(number)) {
-            throw new DataAccessException(formatError);
+            throw new DataAccessException(POSITION_FORMAT_ERROR);
         }
         int row = Character.getNumericValue(number);
 
