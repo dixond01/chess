@@ -71,6 +71,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
                 case ("redraw") -> redrawChessBoard();
                 case ("highlight") -> highlightLegalMoves(params);
                 case ("makemove") -> makeMove(params);
+                case ("leave") -> "quit";
                 default -> null;
             };
         }
@@ -79,6 +80,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
                 case ("help") -> help();
                 case ("redraw") -> redrawChessBoard();
                 case ("highlight") -> highlightLegalMoves(params);
+                case ("leave") -> "quit";
                 default -> null;
             };
         }
