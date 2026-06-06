@@ -15,4 +15,10 @@ public class LoadGameMessage extends ServerMessage {
     public ChessGame getGame() {
         return game;
     }
+
+    //what should we return here?
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
