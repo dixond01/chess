@@ -48,7 +48,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
                     - help
                     - redraw
                     - highlight <column (letter)><row (number)>
-                    - makeMove <starting column><starting row> <ending column> <ending row> <promotion piece>
+                    - makeMove <starting column><starting row> <ending column> <ending row> <optional: promotion piece>
                     - quit
                     """;
         }
@@ -151,6 +151,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
             startString = param.substring(0,2);
             endString = param.substring(2);
         }
+
         ChessGame game = gameData.game();
         ChessMove move = new ChessMove(getChessPosition(startString), getChessPosition(endString), promotionPiece);
         try {
@@ -167,6 +168,8 @@ public class GameplayClient implements Client, ServerMessageObserver {
         System.out.println("Leaving game and returning to selection screen...");
         new PostLoginClient(server).run();
     }
+
+    //helper methods
 
     private ChessPosition getChessPosition(String positionAddress) throws DataAccessException {
         String outOfRangeError = "Error: column must be a-h, row must be 1-8";
