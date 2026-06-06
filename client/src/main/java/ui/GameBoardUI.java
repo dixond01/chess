@@ -49,8 +49,7 @@ public class GameBoardUI {
     }
 
     public boolean[][] getHighlightArray(ChessPosition position) {
-        ChessPiece targetPiece = game.getBoard().getPiece(position);
-        Collection<ChessMove> possibleMoves = targetPiece.pieceMoves(game.getBoard(), position);
+        Collection<ChessMove> possibleMoves = game.validMoves(position);
 
         Collection<ChessPosition> endPositions = new ArrayList<>();
         for (ChessMove move : possibleMoves) {
