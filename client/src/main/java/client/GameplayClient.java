@@ -1,7 +1,6 @@
 package client;
 
-import chess.ChessGame;
-import chess.ChessPosition;
+import chess.*;
 import client.websocket.ServerMessageObserver;
 import client.websocket.WebSocketFacade;
 import model.exception.DataAccessException;
@@ -49,7 +48,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
                     - help
                     - redraw
                     - highlight <column (letter)><row (number)>
-                    - makeMove <starting column><starting row> <ending column> <ending row>
+                    - makeMove <starting column><starting row> <ending column> <ending row> <promotion piece>
                     - quit
                     """;
         }
@@ -121,6 +120,44 @@ public class GameplayClient implements Client, ServerMessageObserver {
     }
 
     private String makeMove(String[] params) throws DataAccessException {
+        if (gameData.game().getTeamTurn() != color) {
+           return "Error: please wait for your turn";
+        }
+
+        String startString;
+        String endString;
+        ChessPiece.PieceType promotionPiece = null;
+        if (params.length < 1) {
+            return "Error:  include start and end positions";
+        } else if (params.length > 5) {
+            return POSITION_FORMAT_ERROR;
+        } else if (params.length > 3) {
+            startString = params[0] + params[1];
+            endString = params[2] + params[3];
+            if (params.length == 5) {
+                promotionPiece = promotionFromString(params[4]);
+            }
+        } else if (params.length > 1) {
+            startString = params[0];
+            endString = params[1];
+            if (params.length == 3) {
+                promotionPiece = promotionFromString(params[2]);
+            }
+        } else {
+            String param = params[0];
+            if (param.length() != 4){
+                return POSITION_FORMAT_ERROR;
+            }
+            startString = param.substring(0,2);
+            endString = param.substring(2);
+        }
+        ChessGame game = gameData.game();
+        ChessMove move = new ChessMove(getChessPosition(startString), getChessPosition(endString), promotionPiece);
+        try {
+            game.makeMove(move);
+        } catch (InvalidMoveException e) {
+            return "Error: invalid move or promotion piece";
+        }
         return "";
     }
 
@@ -156,5 +193,16 @@ public class GameplayClient implements Client, ServerMessageObserver {
         }
 
         return new ChessPosition(row, col);
+    }
+
+    private ChessPiece.PieceType promotionFromString(String promotionPiece) {
+        promotionPiece = promotionPiece.toLowerCase();
+        return switch (promotionPiece) {
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            default -> null;
+        };
     }
 }

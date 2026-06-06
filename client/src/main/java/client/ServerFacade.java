@@ -28,7 +28,6 @@ public class ServerFacade {
         serverUrl = String.format("http://localhost:%s", port);
     }
 
-    //serverFacade should handle UserGameCommands and ServerMessages to send to clients?
     public void clear() throws DataAccessException {
         var request = buildRequest("DELETE", "/db", null, null);
         var response = sendRequest(request);
