@@ -64,7 +64,7 @@ public class Server {
         this(new ClearService(USER_DAO, GAME_DAO, AUTH_DAO), new GameService(GAME_DAO, AUTH_DAO), new UserService(USER_DAO, AUTH_DAO));
     }
 
-    public Server(ClearService clearService, GameService gameService, UserService userService) {
+    public Server(ClearService clearService, GameService gameService, UserService userService) throws DataAccessException {
         this.clearService = clearService;
         this.gameService = gameService;
         this.userService = userService;

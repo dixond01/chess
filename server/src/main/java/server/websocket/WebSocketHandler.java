@@ -1,7 +1,10 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
 import io.javalin.websocket.*;
+import model.exception.DataAccessException;
 import model.exception.UnauthorizedException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +16,13 @@ import java.io.IOException;
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
+
+    private final SQLAuthDAO authDAO = new SQLAuthDAO();
+    private final SQLGameDAO gameDAO = new SQLGameDAO();
+
+    public WebSocketHandler() throws DataAccessException {
+    }
+
 
     @Override
     public void handleConnect(WsConnectContext ctx) {
@@ -29,7 +39,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(
                     wsMessageContext.message(), UserGameCommand.class);
             gameId = command.getGameID();
-            String username = getUsername(command.getAuthString());
+            String username = getUsername(command.getAuthToken());
             saveSession(gameId, session);
 
             switch (command.getCommandType()) {
@@ -82,5 +92,19 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (Exception ex) {
             throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
         }
+    }
+
+    private String getUsername(String authToken) throws DataAccessException {
+        String username;
+        try {
+            username = authDAO.getAuth(authToken).username();
+        } catch (DataAccessException e) {
+            throw new DataAccessException("cannot get username from database");
+        }
+        return username;
+    }
+
+    private void saveSession(int gameID, Session session) {
+        connections.add(gameID, session);
     }
 }

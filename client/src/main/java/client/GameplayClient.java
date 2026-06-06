@@ -25,6 +25,8 @@ public class GameplayClient implements Client, ServerMessageObserver {
         this.participant = participant;
         this.ws = new WebSocketFacade(server.getServerUrl(), this);
         this.color = color;
+
+        ws.connect(server.getAuthToken(), gameData.gameID());
     }
 
     @Override
@@ -159,6 +161,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
         } catch (InvalidMoveException e) {
             return "Error: invalid move or promotion piece";
         }
+        //check here or in websocket for check, checkmate, winning, and any other conditions
         return "";
     }
 

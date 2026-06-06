@@ -3,6 +3,7 @@ package client.websocket;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import model.exception.DataAccessException;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -53,6 +54,15 @@ public class WebSocketFacade extends Endpoint {
     }
 
     //methods to handle UserGameCommands/sending data through websocket, comes from client
+
+    public void connect(String authToken, int gameID) throws DataAccessException {
+        try {
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (IOException e) {
+            throw new DataAccessException("Error: authToken or gameID doesn't exist");
+        }
+    }
     public void enterPetShop(String visitorName) throws ResponseException {
         try {
             var action = new Action(Action.Type.ENTER, visitorName);
