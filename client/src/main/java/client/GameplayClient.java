@@ -68,13 +68,13 @@ public class GameplayClient implements Client, ServerMessageObserver {
     //highlight legal moves
     private void redrawChessBoard() {
         var ui = new GameBoardUI(gameData.game(), color);
-        ui.drawGame();
+        ui.drawGame(false, null);
     }
     private void highlightLegalMoves(String positionAddress) throws DataAccessException {
         var ui = new GameBoardUI(gameData.game(), color);
         try {
             ChessPosition piecePosition = getChessPosition(positionAddress);
-            ui.highlightLegalMoves(piecePosition);
+            ui.drawGame(true, piecePosition);
         } catch (DataAccessException e) {
             System.out.println(e.getMessage());
         }
