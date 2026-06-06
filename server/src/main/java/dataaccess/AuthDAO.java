@@ -1,7 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
-import model.DataAccessException;
+import model.exception.DataAccessException;
 
 import java.util.Map;
 import java.util.UUID;

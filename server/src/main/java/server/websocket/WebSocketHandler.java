@@ -1,11 +1,12 @@
 package server.websocket;
 
 import com.google.gson.Gson;
-import exception.ResponseException;
 import io.javalin.websocket.*;
+import model.exception.UnauthorizedException;
 import org.eclipse.jetty.websocket.api.Session;
-import webSocketMessages.Action;
-import webSocketMessages.Notification;
+import org.jetbrains.annotations.NotNull;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 
@@ -20,17 +21,31 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     @Override
-    public void handleMessage(WsMessageContext ctx) {
+    public void handleMessage(@NotNull WsMessageContext wsMessageContext) throws Exception {
+        int gameId = -1;
+        Session session = wsMessageContext.session;
+
         try {
-            Action action = new Gson().fromJson(ctx.message(), Action.class);
-            switch (action.type()) {
-                case ENTER -> enter(action.visitorName(), ctx.session);
-                case EXIT -> exit(action.visitorName(), ctx.session);
+            UserGameCommand command = new Gson().fromJson(
+                    wsMessageContext.message(), UserGameCommand.class);
+            gameId = command.getGameID();
+            String username = getUsername(command.getAuthString());
+            saveSession(gameId, session);
+
+            switch (command.getCommandType()) {
+                case CONNECT -> connect(session, username, (UserGameCommand) command);
+                case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
+                case LEAVE -> leaveGame(session, username, (UserGameCommand) command);
+                case RESIGN -> resign(session, username, (UserGameCommand) command);
             }
-        } catch (IOException ex) {
+        } catch (UnauthorizedException ex) {
+            sendMessage(session, gameId, "Error: unauthorized");
+        } catch (Exception ex) {
             ex.printStackTrace();
+            sendMessage(session, gameId, "Error: " + ex.getMessage());
         }
     }
+
 
     @Override
     public void handleClose(WsCloseContext ctx) {

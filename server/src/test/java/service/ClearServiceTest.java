@@ -1,7 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import model.DataAccessException;
+import model.exception.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;

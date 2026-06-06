@@ -1,6 +1,6 @@
 package client;
 
-import model.DataAccessException;
+import model.exception.DataAccessException;
 import model.request.LoginRequest;
 import model.request.RegisterRequest;
 import model.result.LoginResult;

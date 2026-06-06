@@ -2,8 +2,10 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
-import model.DataAccessException;
+import model.exception.AlreadyTakenException;
+import model.exception.DataAccessException;
 import model.GameData;
+import model.exception.UnauthorizedException;
 import model.request.CreateGameRequest;
 import model.request.JoinGameRequest;
 import model.request.ListGamesRequest;

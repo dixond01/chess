@@ -1,6 +1,6 @@
 package client;
 
-import model.DataAccessException;
+import model.exception.DataAccessException;
 
 import java.util.Arrays;
 import java.util.Scanner;

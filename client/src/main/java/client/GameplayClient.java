@@ -3,9 +3,8 @@ package client;
 import chess.ChessGame;
 import client.websocket.ServerMessageObserver;
 import client.websocket.WebSocketFacade;
-import model.DataAccessException;
+import model.exception.DataAccessException;
 import model.GameData;
-import server.Server;
 import ui.GameBoardUI;
 import websocket.messages.ServerMessage;
 

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    //need to change this container
+    //need to change this container to map with key gameId and value set of sessions in that game
     public final ConcurrentHashMap<Session, Session> connections = new ConcurrentHashMap<>();
 
     public void add(Session session) {

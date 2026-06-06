@@ -3,7 +3,7 @@ package client;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import model.DataAccessException;
+import model.exception.DataAccessException;
 import model.result.CreateGameResult;
 import model.result.ListGamesResult;
 import model.result.LoginResult;

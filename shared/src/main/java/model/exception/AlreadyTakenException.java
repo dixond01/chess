@@ -1,4 +1,4 @@
-package dataaccess;
+package model.exception;
 
 public class AlreadyTakenException extends Exception {
     public AlreadyTakenException(String message) {

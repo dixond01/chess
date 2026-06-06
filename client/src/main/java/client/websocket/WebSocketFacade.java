@@ -2,11 +2,9 @@ package client.websocket;
 
 import com.google.gson.Gson;
 import jakarta.websocket.*;
-import model.DataAccessException;
-import websocket.messages.NotificationMessage;
+import model.exception.DataAccessException;
 import websocket.messages.ServerMessage;
 
-import javax.management.Notification;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

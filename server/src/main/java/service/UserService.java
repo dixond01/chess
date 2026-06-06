@@ -2,8 +2,10 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
-import model.DataAccessException;
+import model.exception.AlreadyTakenException;
+import model.exception.DataAccessException;
 import model.UserData;
+import model.exception.UnauthorizedException;
 import org.mindrot.jbcrypt.BCrypt;
 import model.request.LoginRequest;
 import model.request.LogoutRequest;

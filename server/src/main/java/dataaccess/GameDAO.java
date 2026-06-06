@@ -1,6 +1,6 @@
 package dataaccess;
 
-import model.DataAccessException;
+import model.exception.DataAccessException;
 import model.GameData;
 
 import java.util.List;

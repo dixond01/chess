@@ -2,8 +2,10 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
-import model.DataAccessException;
+import model.exception.AlreadyTakenException;
+import model.exception.DataAccessException;
 import model.UserData;
+import model.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import model.request.LoginRequest;
