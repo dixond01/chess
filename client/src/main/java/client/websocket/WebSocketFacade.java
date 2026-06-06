@@ -31,7 +31,6 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    //probably have to check type and deserialize again, or do that in notify
                     switch (serverMessage.getServerMessageType()) {
                         case ServerMessage.ServerMessageType.ERROR ->
                                 serverMessage = new Gson().fromJson(message, ErrorMessage.class);
@@ -51,5 +50,25 @@ public class WebSocketFacade extends Endpoint {
     //Endpoint requires this method, but you don't have to do anything
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
+
+    //methods to handle UserGameCommands/sending data through websocket, comes from client
+    public void enterPetShop(String visitorName) throws ResponseException {
+        try {
+            var action = new Action(Action.Type.ENTER, visitorName);
+            //sends message to server
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+        }
+    }
+
+    public void leavePetShop(String visitorName) throws ResponseException {
+        try {
+            var action = new Action(Action.Type.EXIT, visitorName);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+        }
     }
 }

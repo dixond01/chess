@@ -34,7 +34,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, (UserGameCommand) command);
-                case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
+                case MAKE_MOVE -> {
+                    command = new Gson().fromJson(wsMessageContext.message(), MakeMoveCommand.class);
+                    makeMove(session, username, (MakeMoveCommand) command);
+                }
                 case LEAVE -> leaveGame(session, username, (UserGameCommand) command);
                 case RESIGN -> resign(session, username, (UserGameCommand) command);
             }
@@ -52,6 +55,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
+    //methods to handle messages from client?
+    //connect
+    //make move
+    //leaveGame
+    //resign
     private void enter(String visitorName, Session session) throws IOException {
         connections.add(session);
         var message = String.format("%s is in the shop", visitorName);

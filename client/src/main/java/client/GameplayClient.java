@@ -40,8 +40,6 @@ public class GameplayClient implements Client, ServerMessageObserver {
 
     @Override
     public String help() {
-        printWhiteBoard();
-        printBlackBoard();
         if (participant == ParticipantType.PLAYER) {
             return """
                     - help
@@ -57,7 +55,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
     }
 
 
-    //must support
+    //must support:
     //help
     //redraw chess board
     //leave
