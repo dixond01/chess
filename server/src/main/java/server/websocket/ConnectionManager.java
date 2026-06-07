@@ -30,4 +30,13 @@ public class ConnectionManager {
 
         }
     }
+
+    public void messageRootClient(int gameID, Session rootSession, ServerMessage serverMessage) throws IOException {
+        String message = serverMessage.toString();
+        for (Session session : connections.get(gameID)) {
+            if (session.isOpen() && session.equals(rootSession)) {
+                session.getRemote().sendString(message);
+            }
+        }
+    }
 }

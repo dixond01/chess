@@ -156,6 +156,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
 
         ChessGame game = gameData.game();
         ChessMove move = new ChessMove(getChessPosition(startString), getChessPosition(endString), promotionPiece);
+        ws.makeMove()
         try {
             game.makeMove(move);
         } catch (InvalidMoveException e) {

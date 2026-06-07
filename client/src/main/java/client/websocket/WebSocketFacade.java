@@ -1,5 +1,6 @@
 package client.websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import model.exception.DataAccessException;
@@ -56,12 +57,16 @@ public class WebSocketFacade extends Endpoint {
     //methods to handle UserGameCommands/sending data through websocket, comes from client
 
     public void connect(String authToken, int gameID) throws DataAccessException {
-        try {
+        try { //change to just throw the IOException?
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
             throw new DataAccessException("Error: authToken or gameID doesn't exist");
         }
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws IOException{
+
     }
     public void enterPetShop(String visitorName) throws ResponseException {
         try {

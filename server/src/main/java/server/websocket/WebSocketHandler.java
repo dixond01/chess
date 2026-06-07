@@ -4,14 +4,19 @@ import com.google.gson.Gson;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import io.javalin.websocket.*;
+import model.GameData;
 import model.exception.DataAccessException;
 import model.exception.UnauthorizedException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
@@ -43,7 +48,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             saveSession(gameId, session);
 
             switch (command.getCommandType()) {
-                case CONNECT -> connect(session, username, (UserGameCommand) command);
+                case CONNECT -> connect(session, username, command);
                 case MAKE_MOVE -> {
                     command = new Gson().fromJson(wsMessageContext.message(), MakeMoveCommand.class);
                     makeMove(session, username, (MakeMoveCommand) command);
@@ -52,10 +57,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN -> resign(session, username, (UserGameCommand) command);
             }
         } catch (UnauthorizedException ex) {
-            sendMessage(session, gameId, "Error: unauthorized");
+            sendMessage(session, gameId, "unauthorized");
         } catch (Exception ex) {
-            ex.printStackTrace();
-            sendMessage(session, gameId, "Error: " + ex.getMessage());
+            sendMessage(session, gameId, ex.getMessage());
         }
     }
 
@@ -70,6 +74,23 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     //make move
     //leaveGame
     //resign
+    private void connect(Session session, String username, UserGameCommand command) throws DataAccessException {
+        try {
+            GameData game = gameDAO.getGame(command.getGameID());
+            String message;
+            if (Objects.equals(username, game.whiteUsername())) {
+                message = String.format("%s joined the game as the white player!", username);
+            } else if (Objects.equals(username, game.blackUsername())) {
+                message = String.format("%s joined the game as the black player!", username);
+            } else {
+                message = String.format("%s is now observing the game!", username);
+            }
+            NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(game.gameID(), session, notification);
+        } catch (DataAccessException | IOException e) {
+            throw new DataAccessException("a game with that ID does not exist");
+        }
+    }
     private void enter(String visitorName, Session session) throws IOException {
         connections.add(session);
         var message = String.format("%s is in the shop", visitorName);
@@ -106,5 +127,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void saveSession(int gameID, Session session) {
         connections.add(gameID, session);
+    }
+
+    private void sendMessage(Session session, int gameID, String message) throws IOException {
+        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+        connections.messageRootClient(gameID, session, errorMessage);
     }
 }
