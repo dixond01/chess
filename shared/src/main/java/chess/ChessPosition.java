@@ -40,7 +40,7 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return String.format("[%d,%d]", row, col);
+        return String.format("%c%d", alphaColumn(col), row);
     }
 
     @Override
@@ -58,5 +58,9 @@ public class ChessPosition {
     @Override
     public int hashCode() {
         return Objects.hash(row, col);
+    }
+
+    private char alphaColumn(int col) {
+        return (char) (col - 1 + 'a');
     }
 }

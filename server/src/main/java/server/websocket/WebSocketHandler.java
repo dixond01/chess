@@ -1,5 +1,8 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
@@ -11,12 +14,14 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ErrorMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
+import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
@@ -56,10 +61,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case LEAVE -> leaveGame(session, username, (UserGameCommand) command);
                 case RESIGN -> resign(session, username, (UserGameCommand) command);
             }
-        } catch (UnauthorizedException ex) {
+        } catch (UnauthorizedException e) {
             sendMessage(session, gameId, "unauthorized");
-        } catch (Exception ex) {
-            sendMessage(session, gameId, ex.getMessage());
+        } catch (IOException e) {
+            sendMessage(session, gameId, "unable to connect to players");
+        } catch (Exception e){
+            sendMessage(session, gameId, e.getMessage());
         }
     }
 
@@ -85,12 +92,69 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             } else {
                 message = String.format("%s is now observing the game!", username);
             }
-            NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            var notification = new NotificationMessage(NOTIFICATION, message);
             connections.broadcast(game.gameID(), session, notification);
         } catch (DataAccessException | IOException e) {
             throw new DataAccessException("a game with that ID does not exist");
         }
     }
+
+    private void makeMove(Session session, String username, MakeMoveCommand command) throws DataAccessException, IOException, InvalidMoveException {
+        GameData gameData;
+        try {
+            gameData = gameDAO.getGame(command.getGameID());
+        } catch (DataAccessException e) {
+            throw new DataAccessException("a game with that ID does not exist");
+        }
+        //make move
+        ChessMove move = command.getMove();
+        gameData.game().makeMove(move);
+        gameDAO.updateGame(gameData);
+
+        //update game boards
+        var updateNotification = new LoadGameMessage(LOAD_GAME, gameData.game());
+        connections.broadcast(gameData.gameID(), null, updateNotification);
+
+        //send move notification to all but root
+        String startString = move.getStartPosition().toString();
+        String endString = move.getEndPosition().toString();
+        String moveMessage = String.format("%s moved from %s to %s", username, startString, endString);
+        var moveNotification = new NotificationMessage(NOTIFICATION, moveMessage);
+        connections.broadcast(gameData.gameID(), session, moveNotification);
+
+        //check for win conditions and set game as complete
+        ChessGame game = gameData.game();
+        String msg = null;
+        if (game.isInCheckmate(WHITE)) {
+            msg = "The white team is in checkmate. The black team wins!";
+            game.setGameOver(true);
+            //handle ending game
+        } else if (game.isInCheckmate(BLACK)) {
+            msg = "The black team is in checkmate. The white team wins!";
+            game.setGameOver(true);
+            //handle ending game
+        } else if (game.isInStalemate(WHITE)) {
+            msg = "The white team is in stalemate. The game ends in a draw!";
+            game.setGameOver(true);
+            //handle ending game
+        } else if (game.isInStalemate(BLACK)) {
+            msg = "The black team is in stalemate. The game ends in a draw!";
+            game.setGameOver(true);
+            //handle ending game
+        } else if (game.isInCheck(WHITE)) {
+            msg = "The white team is in check!";
+        } else if (game.isInCheck(BLACK)) {
+            msg = "The black team is in check!";
+        }
+        if (msg != null) {
+            var gameStatusNotification = new NotificationMessage(NOTIFICATION, msg);
+            connections.broadcast(gameData.gameID(), null, gameStatusNotification);
+        }
+        if (game.isGameOver()) {
+            gameDAO.updateGame(gameData);
+        }
+    }
+
     private void enter(String visitorName, Session session) throws IOException {
         connections.add(session);
         var message = String.format("%s is in the shop", visitorName);
@@ -130,7 +194,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void sendMessage(Session session, int gameID, String message) throws IOException {
-        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+        ErrorMessage errorMessage = new ErrorMessage(ERROR, message);
         connections.messageRootClient(gameID, session, errorMessage);
     }
 }

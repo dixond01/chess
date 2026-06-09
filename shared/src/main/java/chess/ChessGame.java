@@ -13,6 +13,8 @@ public class ChessGame {
     TeamColor teamTurn;
     ChessBoard gameBoard;
 
+    boolean isGameOver = false;
+
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.gameBoard = new ChessBoard();
@@ -89,11 +91,14 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (isGameOver) {
+            throw new InvalidMoveException("the game is over. No more moves can be made.");
+        }
         ChessPiece myPiece = gameBoard.getPiece(move.getStartPosition());
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
         if (moves == null || !moves.contains(move)
                 || getTeamTurn() != myPiece.getTeamColor()) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("invalid move or promotion piece");
         }
         if (move.getPromotionPiece() != null) {
             myPiece = new ChessPiece(myPiece.getTeamColor(), move.getPromotionPiece());
@@ -206,6 +211,14 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
     }
 
     @Override

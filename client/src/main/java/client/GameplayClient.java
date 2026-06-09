@@ -85,16 +85,17 @@ public class GameplayClient implements Client, ServerMessageObserver {
                 default -> null;
             };
         }
+        //could change help screen if the game is over, but not a priority
     }
 
 
     //must support:
-    //help
-    //redraw chess board
+    //DONE help
+    //DONE redraw chess board
     //leave
-    //make move
+    //DONE make move
     //resign
-    //highlight legal moves
+    //DONE highlight legal moves
     private String redrawChessBoard() {
         var ui = new GameBoardUI(gameData.game(), color);
         ui.drawGame(false, null);
@@ -154,15 +155,8 @@ public class GameplayClient implements Client, ServerMessageObserver {
             endString = param.substring(2);
         }
 
-        ChessGame game = gameData.game();
         ChessMove move = new ChessMove(getChessPosition(startString), getChessPosition(endString), promotionPiece);
-        ws.makeMove()
-        try {
-            game.makeMove(move);
-        } catch (InvalidMoveException e) {
-            return "Error: invalid move or promotion piece";
-        }
-        //check here or in websocket for check, checkmate, winning, and any other conditions
+        ws.makeMove(server.getAuthToken(), gameData.gameID(), move);
         return "";
     }
 

@@ -23,7 +23,7 @@ public interface Client {
                     return;
                 }
                 System.out.println(SET_TEXT_COLOR_LIGHT_GREY + result + SET_TEXT_COLOR_WHITE);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 var msg = e.toString();
                 System.out.println(SET_TEXT_COLOR_RED + msg + SET_TEXT_COLOR_WHITE);
             }

@@ -4,6 +4,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import model.exception.DataAccessException;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -65,7 +66,13 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void makeMove(String authToken, int gameID, ChessMove move) throws IOException{
+    public void makeMove(String authToken, int gameID, ChessMove move) throws DataAccessException {
+        try {
+            MakeMoveCommand command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (IOException e) {
+            throw new DataAccessException("Error: authToken or gameID doesn't exist");
+        }
 
     }
     public void enterPetShop(String visitorName) throws ResponseException {
