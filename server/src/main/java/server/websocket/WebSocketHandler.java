@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.SQLAuthDAO;
@@ -99,15 +100,27 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void makeMove(Session session, String username, MakeMoveCommand command) throws DataAccessException, IOException, InvalidMoveException {
+    private void makeMove(Session session, String username, MakeMoveCommand command)
+            throws DataAccessException, IOException, InvalidMoveException {
         GameData gameData;
         try {
             gameData = gameDAO.getGame(command.getGameID());
         } catch (DataAccessException e) {
             throw new DataAccessException("a game with that ID does not exist");
         }
-        //make move
+
+        //check color matches and it's the player's turn
         ChessMove move = command.getMove();
+        ChessGame.TeamColor userColor = getUserColor(getUsername(command.getAuthToken()), gameData);
+        ChessPiece pieceToMove = gameData.game().getBoard().getPiece(move.getStartPosition());
+        if (userColor != pieceToMove.getTeamColor()) {
+            throw new InvalidMoveException("you cannot move your opponent's pieces.");
+        }
+        if (userColor != gameData.game().getTeamTurn()) {
+            throw new InvalidMoveException("it is not your turn. Please wait until your opponent makes a move.");
+        }
+
+        //make move
         gameData.game().makeMove(move);
         gameDAO.updateGame(gameData);
 
@@ -196,5 +209,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void sendMessage(Session session, int gameID, String message) throws IOException {
         ErrorMessage errorMessage = new ErrorMessage(ERROR, message);
         connections.messageRootClient(gameID, session, errorMessage);
+    }
+
+    private ChessGame.TeamColor getUserColor(String username, GameData gameData) {
+        if (Objects.equals(username, gameData.whiteUsername())) {
+            return WHITE;
+        } else if (Objects.equals(username, gameData.blackUsername())) {
+            return BLACK;
+        }
+        return null;
     }
 }
