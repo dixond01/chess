@@ -3,18 +3,21 @@ package client;
 import chess.*;
 import client.websocket.ServerMessageObserver;
 import client.websocket.WebSocketFacade;
+import dataaccess.SQLGameDAO;
 import model.exception.DataAccessException;
 import model.GameData;
 import ui.GameBoardUI;
 import websocket.messages.ServerMessage;
+
+import javax.xml.crypto.Data;
 
 public class GameplayClient implements Client, ServerMessageObserver {
     private final ParticipantType participant;
     private final ServerFacade server;
     private final WebSocketFacade ws;
     private GameData gameData;
-
     private ChessGame.TeamColor color;
+    private final SQLGameDAO gameDAO;
 
     static final String POSITION_FORMAT_ERROR = "Error: please format piece position: <column (letter)><row (number)>";
 
@@ -25,13 +28,15 @@ public class GameplayClient implements Client, ServerMessageObserver {
         this.participant = participant;
         this.ws = new WebSocketFacade(server.getServerUrl(), this);
         this.color = color;
+        this.gameDAO = new SQLGameDAO();
 
         ws.connect(server.getAuthToken(), gameData.gameID());
     }
 
     @Override
-    public void notify(ServerMessage serverMessage) {
+    public void notify(ServerMessage serverMessage) throws DataAccessException {
         switch (serverMessage.getServerMessageType()) {
+            //add color(s)
             case ERROR -> System.out.println(serverMessage.toString());
             case NOTIFICATION -> System.out.println(serverMessage.toString());
             case LOAD_GAME -> redrawChessBoard();
@@ -51,7 +56,8 @@ public class GameplayClient implements Client, ServerMessageObserver {
                     - redraw
                     - highlight <column (letter)><row (number)>
                     - makeMove <starting column><starting row> <ending column> <ending row> <optional: promotion piece>
-                    - quit
+                    - resign
+                    - leave
                     """;
         }
         else {
@@ -59,7 +65,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
                     - help
                     - redraw
                     - highlight <column (letter)><row (number)>
-                    - quit
+                    - leave
                     """;
         }
     }
@@ -72,6 +78,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
                 case ("redraw") -> redrawChessBoard();
                 case ("highlight") -> highlightLegalMoves(params);
                 case ("makemove") -> makeMove(params);
+                case ("resign") -> resign();
                 case ("leave") -> "quit";
                 default -> null;
             };
@@ -92,11 +99,12 @@ public class GameplayClient implements Client, ServerMessageObserver {
     //must support:
     //DONE help
     //DONE redraw chess board
-    //leave
+    //DONE leave
     //DONE make move
     //resign
     //DONE highlight legal moves
-    private String redrawChessBoard() {
+    private String redrawChessBoard() throws DataAccessException {
+        updateGame();
         var ui = new GameBoardUI(gameData.game(), color);
         ui.drawGame(false, null);
         return "";
@@ -157,6 +165,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
 
         ChessMove move = new ChessMove(getChessPosition(startString), getChessPosition(endString), promotionPiece);
         ws.makeMove(server.getAuthToken(), gameData.gameID(), move);
+        updateGame();
         return "";
     }
 
@@ -164,7 +173,23 @@ public class GameplayClient implements Client, ServerMessageObserver {
     @Override
     public void quit() {
         System.out.println("Leaving game and returning to selection screen...");
-        new PostLoginClient(server).run();
+        try {
+            ws.leaveGame(server.getAuthToken(), gameData.gameID());
+            updateGame();
+            new PostLoginClient(server).run();
+        } catch (DataAccessException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private String resign() {
+        try {
+            ws.resign(server.getAuthToken(), gameData.gameID());
+            updateGame();
+        } catch (DataAccessException e) {
+            System.out.println(e.getMessage());
+        }
+        return "";
     }
 
     //helper methods
@@ -205,5 +230,9 @@ public class GameplayClient implements Client, ServerMessageObserver {
             case "knight" -> ChessPiece.PieceType.KNIGHT;
             default -> null;
         };
+    }
+
+    private void updateGame() throws DataAccessException {
+        this.gameData =  gameDAO.getGame(gameData.gameID());
     }
 }

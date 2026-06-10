@@ -73,24 +73,22 @@ public class WebSocketFacade extends Endpoint {
         } catch (IOException e) {
             throw new DataAccessException("Error: authToken or gameID doesn't exist");
         }
-
     }
-    public void enterPetShop(String visitorName) throws ResponseException {
+    public void resign(String authToken, int gameID) throws DataAccessException {
         try {
-            var action = new Action(Action.Type.ENTER, visitorName);
-            //sends message to server
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+            throw new DataAccessException("Error: authToken or gameID doesn't exist");
         }
     }
 
-    public void leavePetShop(String visitorName) throws ResponseException {
+    public void leaveGame(String authToken, int gameID) throws DataAccessException {
         try {
-            var action = new Action(Action.Type.EXIT, visitorName);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+            throw new DataAccessException("Error: authToken or gameID doesn't exist");
         }
     }
 }

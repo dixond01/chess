@@ -62,8 +62,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case LEAVE -> leaveGame(session, username, (UserGameCommand) command);
                 case RESIGN -> resign(session, username, (UserGameCommand) command);
             }
-        } catch (UnauthorizedException e) {
-            sendMessage(session, gameId, "unauthorized");
         } catch (IOException e) {
             sendMessage(session, gameId, "unable to connect to players");
         } catch (Exception e){
@@ -168,28 +166,41 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void enter(String visitorName, Session session) throws IOException {
-        connections.add(session);
-        var message = String.format("%s is in the shop", visitorName);
-        var notification = new Notification(Notification.Type.ARRIVAL, message);
-        connections.broadcast(session, notification);
-    }
-
-    private void exit(String visitorName, Session session) throws IOException {
-        var message = String.format("%s left the shop", visitorName);
-        var notification = new Notification(Notification.Type.DEPARTURE, message);
-        connections.broadcast(session, notification);
-        connections.remove(session);
-    }
-
-    public void makeNoise(String petName, String sound) throws ResponseException {
-        try {
-            var message = String.format("%s says %s", petName, sound);
-            var notification = new Notification(Notification.Type.NOISE, message);
-            connections.broadcast(null, notification);
-        } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+    private void leaveGame(Session session, String username, UserGameCommand command)
+            throws IOException, DataAccessException {
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        ChessGame.TeamColor userColor = getUserColor(command.getAuthToken(), gameData);
+        if (userColor != null) {
+            GameData gameWithoutPlayer = new GameData(gameData.gameID(), null,
+                    gameData.blackUsername(), gameData.gameName(), gameData.game());
+            if (Objects.equals(username, gameData.blackUsername())) {
+                gameWithoutPlayer = new GameData(gameData.gameID(), gameData.whiteUsername(),
+                        null, gameData.gameName(), gameData.game());
+            }
+            gameDAO.updateGame(gameWithoutPlayer);
         }
+
+        var message = String.format("%s left the game", username);
+        var notification = new NotificationMessage(NOTIFICATION, message);
+        connections.broadcast(gameData.gameID(), session, notification);
+        connections.remove(command.getGameID(), session);
+    }
+
+    public void resign(Session session, String username, UserGameCommand command)
+            throws DataAccessException, IOException {
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        gameData.game().setGameOver(true);
+        gameDAO.updateGame(gameData);
+
+        String resigningTeam = "white";
+        String winningTeam = "black";
+        if (Objects.equals(username, gameData.blackUsername())) {
+            resigningTeam = "black";
+            winningTeam = "white";
+        }
+        var message = String.format("The %s team resigned. The %s team wins!", resigningTeam, winningTeam);
+        var notification = new NotificationMessage(NOTIFICATION, message);
+        connections.broadcast(gameData.gameID(), null, notification);
     }
 
     private String getUsername(String authToken) throws DataAccessException {
