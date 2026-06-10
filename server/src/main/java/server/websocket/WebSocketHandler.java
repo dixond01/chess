@@ -81,14 +81,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    //methods to handle messages from client?
-    //connect
-    //make move
-    //leaveGame
-    //resign
     private void connect(Session session, String username, UserGameCommand command) throws DataAccessException {
         try {
             GameData game = gameDAO.getGame(command.getGameID());
+            var loadGameMessage = new LoadGameMessage(LOAD_GAME, game.game());
+            connections.messageRootClient(session, loadGameMessage);
             String message;
             if (Objects.equals(username, game.whiteUsername())) {
                 message = String.format("%s joined the game as the white player!", username);
@@ -213,7 +210,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String username;
         try {
             username = authDAO.getAuth(authToken).username();
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             throw new DataAccessException("cannot get username from database");
         }
         return username;
@@ -225,7 +222,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void sendMessage(Session session, int gameID, String message) throws IOException {
         ErrorMessage errorMessage = new ErrorMessage(ERROR, message);
-        connections.messageRootClient(gameID, session, errorMessage);
+        connections.messageRootClient(session, errorMessage);
     }
 
     private ChessGame.TeamColor getUserColor(String username, GameData gameData) {

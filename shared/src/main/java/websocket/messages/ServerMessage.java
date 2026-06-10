@@ -47,7 +47,4 @@ public class ServerMessage {
         return Objects.hash(getServerMessageType());
     }
 
-    public String toString() {
-        return new Gson().toJson(this);
-    }
 }

@@ -42,8 +42,8 @@ public class GameplayClient implements Client, ServerMessageObserver {
     public void notify(ServerMessage serverMessage) {
         switch (serverMessage.getServerMessageType()) {
 
-            case ERROR -> System.out.println(serverMessage.toString());
-            case NOTIFICATION -> System.out.println(serverMessage.toString());
+            case ERROR -> System.out.println(serverMessage);
+            case NOTIFICATION -> System.out.println(serverMessage);
             case LOAD_GAME -> {
                 try {
                     redrawChessBoard();
