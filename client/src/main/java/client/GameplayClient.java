@@ -22,14 +22,19 @@ public class GameplayClient implements Client, ServerMessageObserver {
     static final String POSITION_FORMAT_ERROR = "Error: please format piece position: <column (letter)><row (number)>";
 
 
-    public GameplayClient(ServerFacade server, GameData gameData, ParticipantType participant, ChessGame.TeamColor color) throws DataAccessException {
+    public GameplayClient(ServerFacade server,
+                          GameData gameData,
+                          ParticipantType participant,
+                          ChessGame.TeamColor color)
+            throws DataAccessException {
         this.server = server;
         this.gameData = gameData;
         this.participant = participant;
-        this.ws = new WebSocketFacade(server.getServerUrl(), this);
         this.color = color;
+
         this.gameDAO = new SQLGameDAO();
 
+        this.ws = new WebSocketFacade(server.getServerUrl(), this);
         ws.connect(server.getAuthToken(), gameData.gameID());
     }
 
