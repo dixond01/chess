@@ -16,9 +16,4 @@ public class LoadGameMessage extends ServerMessage {
         return game;
     }
 
-    //what should we return here?
-    @Override
-    public String toString() {
-        return super.toString();
-    }
 }

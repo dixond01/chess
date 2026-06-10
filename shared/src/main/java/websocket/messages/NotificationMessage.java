@@ -13,9 +13,4 @@ public class NotificationMessage extends ServerMessage {
     public String getNotification() {
         return notification;
     }
-
-    @Override
-    public String toString() {
-        return notification;
-    }
 }

@@ -142,6 +142,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
     }
 
     private String makeMove(String[] params) throws DataAccessException {
+        updateGame();
         if (gameData.game().getTeamTurn() != color) {
            return "Error: please wait for your turn";
         }

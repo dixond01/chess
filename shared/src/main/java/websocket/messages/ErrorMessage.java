@@ -11,8 +11,4 @@ public class ErrorMessage extends ServerMessage {
         this.error = "Error: " + error;
     }
 
-    @Override
-    public String toString() {
-        return error;
-    }
 }
