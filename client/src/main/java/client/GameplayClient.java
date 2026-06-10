@@ -34,12 +34,18 @@ public class GameplayClient implements Client, ServerMessageObserver {
     }
 
     @Override
-    public void notify(ServerMessage serverMessage) throws DataAccessException {
+    public void notify(ServerMessage serverMessage) {
         switch (serverMessage.getServerMessageType()) {
-            //add color(s)
+
             case ERROR -> System.out.println(serverMessage.toString());
             case NOTIFICATION -> System.out.println(serverMessage.toString());
-            case LOAD_GAME -> redrawChessBoard();
+            case LOAD_GAME -> {
+                try {
+                    redrawChessBoard();
+                } catch (DataAccessException e) {
+                    System.out.println("Error: unable to find game in database");
+                }
+            }
         }
     }
 
