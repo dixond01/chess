@@ -10,7 +10,6 @@ import dataaccess.SQLGameDAO;
 import io.javalin.websocket.*;
 import model.GameData;
 import model.exception.DataAccessException;
-import model.exception.UnauthorizedException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import websocket.commands.MakeMoveCommand;
@@ -65,8 +64,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     command = new Gson().fromJson(wsMessageContext.message(), MakeMoveCommand.class);
                     makeMove(session, username, (MakeMoveCommand) command);
                 }
-                case LEAVE -> leaveGame(session, username, (UserGameCommand) command);
-                case RESIGN -> resign(session, username, (UserGameCommand) command);
+                case LEAVE -> leaveGame(session, username, command);
+                case RESIGN -> resign(username, command);
             }
         } catch (IOException e) {
             sendMessage(session, gameId, "unable to connect to players");
@@ -112,7 +111,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         //check color matches and it's the player's turn
         ChessMove move = command.getMove();
-        ChessGame.TeamColor userColor = getUserColor(getUsername(command.getAuthToken()), gameData);
+        ChessGame.TeamColor userColor = getUserColor(command.getAuthToken(), gameData);
         ChessPiece pieceToMove = gameData.game().getBoard().getPiece(move.getStartPosition());
         if (userColor != pieceToMove.getTeamColor()) {
             throw new InvalidMoveException("you cannot move your opponent's pieces.");
@@ -189,17 +188,25 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.remove(command.getGameID(), session);
     }
 
-    public void resign(Session session, String username, UserGameCommand command)
+    public void resign(String username, UserGameCommand command)
             throws DataAccessException, IOException {
         GameData gameData = gameDAO.getGame(command.getGameID());
+        if (gameData.game().isGameOver()) {
+            throw new DataAccessException("the game is over. You cannot resign.");
+        }
         gameData.game().setGameOver(true);
         gameDAO.updateGame(gameData);
 
-        String resigningTeam = "white";
-        String winningTeam = "black";
+        String resigningTeam;
+        String winningTeam;
         if (Objects.equals(username, gameData.blackUsername())) {
             resigningTeam = "black";
             winningTeam = "white";
+        } else if (Objects.equals(username, gameData.whiteUsername())) {
+            resigningTeam = "white";
+            winningTeam = "black";
+        } else {
+            throw new DataAccessException("must be a player to resign");
         }
         var message = String.format("The %s team resigned. The %s team wins!", resigningTeam, winningTeam);
         var notification = new NotificationMessage(NOTIFICATION, message);
@@ -225,7 +232,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.messageRootClient(session, errorMessage);
     }
 
-    private ChessGame.TeamColor getUserColor(String username, GameData gameData) {
+    private ChessGame.TeamColor getUserColor(String authToken, GameData gameData) throws DataAccessException {
+        String username = getUsername(authToken);
         if (Objects.equals(username, gameData.whiteUsername())) {
             return WHITE;
         } else if (Objects.equals(username, gameData.blackUsername())) {
