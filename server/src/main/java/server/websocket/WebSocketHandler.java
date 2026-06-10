@@ -28,10 +28,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private final ConnectionManager connections = new ConnectionManager();
 
-    private final SQLAuthDAO authDAO = new SQLAuthDAO();
-    private final SQLGameDAO gameDAO = new SQLGameDAO();
+    private SQLAuthDAO authDAO;
+    private SQLGameDAO gameDAO;
 
-    public WebSocketHandler() throws DataAccessException {
+    public WebSocketHandler() {
+        try {
+            this.authDAO = new SQLAuthDAO();
+            this.gameDAO = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            System.out.println("Error: unable to connect to server");
+        }
     }
 
 

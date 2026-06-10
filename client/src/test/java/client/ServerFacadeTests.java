@@ -21,10 +21,14 @@ class ServerFacadeTests {
 
     @BeforeAll
     static void init() {
-        server = new Server();
-        var port = server.run(0);
-        System.out.println("Started test HTTP server on " + port);
-        serverFacade = new ServerFacade(String.valueOf(port));
+        try {
+            server = new Server();
+            var port = server.run(0);
+            System.out.println("Started test HTTP server on " + port);
+            serverFacade = new ServerFacade(String.valueOf(port));
+        } catch (DataAccessException e) {
+            System.out.println("Unable to start server");
+        }
     }
 
     @AfterAll

@@ -58,7 +58,7 @@ public class GameBoardUI {
 
         boolean[][] highlightArray = new boolean[8][8];
         for (ChessPosition endPosition : endPositions) {
-            highlightArray[endPosition.getRow()][endPosition.getColumn()] = true;
+            highlightArray[endPosition.getRow() - 1][endPosition.getColumn() - 1] = true;
         }
 
         return highlightArray;

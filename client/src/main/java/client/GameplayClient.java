@@ -123,12 +123,12 @@ public class GameplayClient implements Client, ServerMessageObserver {
     private String highlightLegalMoves(String[] params){
         if (params.length < 1) {
             return "Error: please include position to highlight moves for";
-        } else if (params.length > 3) {
+        } else if (params.length > 2) {
             return POSITION_FORMAT_ERROR;
         }
-        String positionAddress = params[1];
-        if (params[2] != null) {
-            positionAddress += params[2];
+        String positionAddress = params[0];
+        if (params.length > 1) {
+            positionAddress += params[1];
         }
         try {
             ChessPosition piecePosition = getChessPosition(positionAddress);
