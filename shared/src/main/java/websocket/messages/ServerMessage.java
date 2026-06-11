@@ -17,10 +17,6 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    //LOAD_GAME 	game (can be any type, just needs to be called game) 	Used by the server to send the current game state to a client. When a client receives this message, it will redraw the chess board.
-    //ERROR 	String errorMessage 	This message is sent to a client when it sends an invalid command. The message must include the word Error.
-    //NOTIFICATION 	String message 	This is a message meant to inform a player when another player made an action.
-
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
     }
