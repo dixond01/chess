@@ -60,6 +60,10 @@ public class PostLoginClient implements Client{
     }
 
     private String createGame(String[] params) throws DataAccessException {
+        String listGames = listGamesCheck();
+        if (listGames != null) {
+            return listGames;
+        }
         if (params.length < 1) {
             return "Please include a game name.";
         }
@@ -82,8 +86,9 @@ public class PostLoginClient implements Client{
     }
 
     private String playGame(String[] params) throws DataAccessException {
-        if (gamesList == null || gamesList.isEmpty()) {
-            return "Please list games first.";
+        String listGames = listGamesCheck();
+        if (listGames != null) {
+            return listGames;
         }
         if (params.length < 2) {
             return "Please include team color and gameID.";
@@ -113,9 +118,7 @@ public class PostLoginClient implements Client{
     }
 
     private String observeGame(String[] params) {
-        if (gamesList == null || gamesList.isEmpty()) {
-            return "Please list games first.";
-        }
+
         if (params.length < 1) {
             return "Please include gameID.";
         }
@@ -135,6 +138,13 @@ public class PostLoginClient implements Client{
         System.out.printf("See you later, %s!%n", server.getUsername());
         server.setUsername(null);
         System.exit(0);
+    }
+
+    private String listGamesCheck() {
+        if (gamesList == null || gamesList.isEmpty()) {
+            return "Please list games first.";
+        }
+        return null;
     }
 
 }

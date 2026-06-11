@@ -9,14 +9,17 @@ import model.GameData;
 import ui.GameBoardUI;
 import websocket.messages.ServerMessage;
 
-import javax.xml.crypto.Data;
+import java.util.Scanner;
+
+import static ui.EscapeSequences.*;
+import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
 public class GameplayClient implements Client, ServerMessageObserver {
     private final ParticipantType participant;
     private final ServerFacade server;
     private final WebSocketFacade ws;
     private GameData gameData;
-    private ChessGame.TeamColor color;
+    private final ChessGame.TeamColor color;
     private final SQLGameDAO gameDAO;
 
     static final String POSITION_FORMAT_ERROR = "Error: please format piece position: <column (letter)><row (number)>";
@@ -35,7 +38,40 @@ public class GameplayClient implements Client, ServerMessageObserver {
         this.gameDAO = new SQLGameDAO();
 
         this.ws = new WebSocketFacade(server.getServerUrl(), this);
-        ws.connect(server.getAuthToken(), gameData.gameID());
+    }
+
+    @Override
+    public void run() {
+        System.out.printf("%s%s%n", SET_TEXT_COLOR_WHITE, startMessage());
+        try {
+            ws.connect(server.getAuthToken(), gameData.gameID());
+        } catch (DataAccessException e) {
+            System.out.println(SET_TEXT_COLOR_RED + e.getMessage() + SET_TEXT_COLOR_WHITE);
+        }
+        System.out.print(help());
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals("quit")) {
+            printPrompt();
+            String line = scanner.nextLine().trim();
+
+            try {
+                result = eval(line);
+                if (result == null) {
+                    return;
+                }
+                System.out.println(SET_TEXT_COLOR_LIGHT_GREY + result + SET_TEXT_COLOR_WHITE);
+            } catch (Exception e) {
+                System.out.println(SET_TEXT_COLOR_RED + e.getMessage() + SET_TEXT_COLOR_WHITE);
+            }
+        }
+        try {
+            quit();
+        } catch (Exception e) {
+            System.exit(0);
+        }
+        System.out.println();
     }
 
     @Override
@@ -117,6 +153,7 @@ public class GameplayClient implements Client, ServerMessageObserver {
     private String redrawChessBoard() throws DataAccessException {
         updateGame();
         var ui = new GameBoardUI(gameData.game(), color);
+        System.out.println();
         ui.drawGame(false, null);
         return "";
     }

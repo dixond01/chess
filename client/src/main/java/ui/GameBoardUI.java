@@ -16,10 +16,7 @@ import static ui.EscapeSequences.*;
 
 public class GameBoardUI {
 
-    private static final int UI_SIZE_IN_SQUARES = 10;
     private static final int CHESS_BOARD_SIZE_IN_SQUARES = 8;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
-
     private final ChessGame game;
     private final ChessGame.TeamColor viewerColor;
 
@@ -49,7 +46,12 @@ public class GameBoardUI {
     }
 
     public boolean[][] getHighlightArray(ChessPosition position) {
-        Collection<ChessMove> possibleMoves = game.validMoves(position);
+        Collection<ChessMove> possibleMoves;
+        if (game.getBoard().getPiece(position) != null) {
+            possibleMoves = game.validMoves(position);
+        } else {
+            return new boolean[8][8];
+        }
 
         Collection<ChessPosition> endPositions = new ArrayList<>();
         for (ChessMove move : possibleMoves) {
