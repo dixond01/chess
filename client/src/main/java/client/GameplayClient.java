@@ -3,9 +3,10 @@ package client;
 import chess.*;
 import client.websocket.ServerMessageObserver;
 import client.websocket.WebSocketFacade;
-import dataaccess.SQLGameDAO;
 import model.exception.DataAccessException;
 import model.GameData;
+import model.request.ListGamesRequest;
+import model.result.ListGamesResult;
 import ui.GameBoardUI;
 import websocket.messages.ServerMessage;
 
@@ -20,8 +21,6 @@ public class GameplayClient implements Client, ServerMessageObserver {
     private final WebSocketFacade ws;
     private GameData gameData;
     private final ChessGame.TeamColor color;
-    private final SQLGameDAO gameDAO;
-
     static final String POSITION_FORMAT_ERROR = "Error: please format piece position: <column (letter)><row (number)>";
 
 
@@ -34,8 +33,6 @@ public class GameplayClient implements Client, ServerMessageObserver {
         this.gameData = gameData;
         this.participant = participant;
         this.color = color;
-
-        this.gameDAO = new SQLGameDAO();
 
         this.ws = new WebSocketFacade(server.getServerUrl(), this);
     }
@@ -282,6 +279,12 @@ public class GameplayClient implements Client, ServerMessageObserver {
     }
 
     private void updateGame() throws DataAccessException {
-        this.gameData =  gameDAO.getGame(gameData.gameID());
+        var listGamesRequest = new ListGamesRequest(server.getAuthToken());
+        ListGamesResult listGamesResult = server.listGames(listGamesRequest);
+        for (GameData game : listGamesResult.games()) {
+            if (game.gameID() == this.gameData.gameID()) {
+                this.gameData = game;
+            }
+        }
     }
 }
